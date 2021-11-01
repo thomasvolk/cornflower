@@ -63,9 +63,9 @@ include AWS::Kubernetes
 include AWS
 
 ctx = Context.new(AWS) {
-    OnlineShop >> ShopDatabase
-    ProductCatalogService >> ProductDatabase
-    OnlineShop >> ProductCatalogService
-    OnlineShop >> OrderQueue
-    WarehouseService >> OrderQueue
+  OnlineShop >> ShopDatabase
+  ProductCatalogService >> ProductDatabase
+  OnlineShop >> ProductCatalogService
+  OnlineShop >> OrderQueue
+  WarehouseService >> OrderQueue
 }
