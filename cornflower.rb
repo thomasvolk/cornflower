@@ -31,6 +31,7 @@ module Cornflower
 
     def relation(from, to)
       @relations << Relation.new(from, to)
+      to
     end
 
     def init_components(components)
@@ -83,8 +84,7 @@ ctx = Context.new(AWS) {
   OnlineShop >> ShopDatabase
   ProductCatalogService >> ProductDatabase
   OnlineShop >> ProductCatalogService
-  OnlineShop >> OrderQueue
-  WarehouseService >> OrderQueue
+  OnlineShop >> OrderQueue >> WarehouseService
 }
 
 puts ctx.relations.map {|r| r.to_s}
