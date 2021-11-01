@@ -22,6 +22,9 @@ module Cornflower
       end
       @class_extension = Module.new
       @class_extension.define_method(:>>, new_connect_method(self))
+      @class_extension.define_method(:submodules) {
+        self.constants.map { |name| self.const_get name }.filter { |c| c.is_a? Module }
+      }
       init_components(components)
       init_block.call
     end
@@ -31,15 +34,14 @@ module Cornflower
     end
 
     def init_components(components)
-      components.filter { |c| c.is_a? Module }.each { |c|
+      components.each { |c|
         init_component(c)
       }
     end
 
     def init_component(component)
       component.extend(@class_extension)
-      components = component.constants.map { |name| component.const_get name }
-      init_components(components)
+      init_components(component.submodules)
     end
     private :init_components, :init_component
   end
