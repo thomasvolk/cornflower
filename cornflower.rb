@@ -1,13 +1,33 @@
 module Cornflower
+  class Relation
+    attr_reader :from, :to
+
+    def initialize(from, to)
+      @from = from
+      @to = to
+    end
+
+    def to_s
+      "Relation(#{@from} -> #{@to})"
+    end
+  end
+
   class Context
+    attr_reader :relations
+
     def initialize(*components, &init_block)
+      @relations = []
       def new_connect_method(context)
-        Proc.new { |component| puts "[#{context}] #{self} ---> #{component}" }
+        Proc.new { |component| context.relation(self, component) }
       end
       @class_extension = Module.new
       @class_extension.define_method(:>>, new_connect_method(self))
       init_components(components)
-      init_block.call()
+      init_block.call
+    end
+
+    def relation(from, to)
+      @relations << Relation.new(from, to)
     end
 
     def init_components(components)
@@ -18,7 +38,7 @@ module Cornflower
 
     def init_component(component)
       component.extend(@class_extension)
-      components = component.constants.map { |name| component.const_get(name) }
+      components = component.constants.map { |name| component.const_get name }
       init_components(components)
     end
     private :init_components, :init_component
@@ -64,3 +84,5 @@ ctx = Context.new(AWS) {
   OnlineShop >> OrderQueue
   WarehouseService >> OrderQueue
 }
+
+puts ctx.relations.map {|r| r.to_s}
