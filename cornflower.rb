@@ -1,10 +1,4 @@
 module Cornflower
-  module ClassExtensions
-    def invokes(component)
-      puts "#{self} ---> #{component}"
-    end
-  end
-
   class Context
     def initialize(*components, &init_block)
       def new_connect_method(context)
