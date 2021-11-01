@@ -6,28 +6,26 @@ module Cornflower
         end
     end
     class Context
-        def initialize(*components)
-            def newInvokeMethod(context)
+        def initialize(*components, &init_block)
+            def new_connect_method(context)
                 Proc.new { |component| puts "[#{context}] #{self} ---> #{component}" }
             end
             @classExtension = Module.new
-            @classExtension.define_method(:invokes, newInvokeMethod(self))
-            initComponents(components)
+            @classExtension.define_method(:>>, new_connect_method(self))
+            init_components(components)
+            init_block.call()
         end
-        def initComponents(components)
+        def init_components(components)
             components.filter { |c| c.is_a? Module }.each { |c|
-                initComponent(c)
+                init_component(c)
             }
         end
-        def initComponent(component)
+        def init_component(component)
             component.extend(@classExtension)
             components = component.constants.map { |name| component.const_get(name) }
-            initComponents(components)
+            init_components(components)
         end
-        def init(&block)
-            block.call()
-        end
-        private :initComponents, :initComponent
+        private :init_components, :init_component
     end
 end
 
@@ -61,12 +59,10 @@ end
 include AWS::Kubernetes
 include AWS
 
-ctx = Context.new(AWS)
-
-ctx.init {
-    OnlineShop .invokes ShopDatabase
-    ProductCatalogService .invokes ProductDatabase
-    OnlineShop .invokes ProductCatalogService
-    OnlineShop .invokes OrderQueue
-    WarehouseService .invokes OrderQueue
+ctx = Context.new(AWS) {
+    OnlineShop >> ShopDatabase
+    ProductCatalogService >> ProductDatabase
+    OnlineShop >> ProductCatalogService
+    OnlineShop >> OrderQueue
+    WarehouseService >> OrderQueue
 }
