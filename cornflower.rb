@@ -1,5 +1,4 @@
 module Cornflower
-
   module ClassExtensions
     def invokes(component)
       puts "#{self} ---> #{component}"
@@ -42,8 +41,10 @@ module AWS
   module Kubernetes
     class OnlineShop
     end
+
     class ProductCatalogService
     end
+
     class WarehouseService
     end
   end
