@@ -68,9 +68,9 @@ module Cornflower
         register(*c.submodules)
       }
     end
-  
+
   end
-  
+
   class ContextWalker
     def initialize(context)
       @context = context
@@ -97,7 +97,7 @@ module Cornflower
     end
 
     private
-    
+
     def traverse_components(level, components)
       components.each { |c|
         @on_begin_component.call(c, level)
@@ -114,25 +114,34 @@ end
 
 
 module AWS
+  SHAPE = "cloud"
 
   module Kubernetes
+    SHAPE = "node"
+
     class OnlineShop
+      SHAPE = "hexagon"
     end
 
     class ProductCatalogService
+      SHAPE = "hexagon"
     end
 
     class WarehouseService
+      SHAPE = "hexagon"
     end
   end
 
   module OrderQueue
+    SHAPE = "queue"
   end
 
   class ShopDatabase
+    SHAPE = "database"
   end
 
   class ProductDatabase
+    SHAPE = "database"
   end
 
 end
@@ -148,28 +157,51 @@ OnlineShop >> ProductCatalogService
 OnlineShop >> OrderQueue | 'send order event'
 OrderQueue << WarehouseService | 'receive order event'
 
+class PlanUMLExporter
+  attr_accessor :default_shape, :indent, :default_arrow
+
+  def initialize
+    @default_shape = "node"
+    @indent = 2
+    @default_arrow = "-->"
+  end
+
+  def begin_component(c, level)
+    scope = ""
+    if c.submodules?
+      scope = " {"
+    end
+    shape = c.const_defined?(:SHAPE) ? c::SHAPE : @default_shape
+    puts "#{indent_space(level)}#{shape} #{c.basename}#{scope}"
+  end
+
+  def end_component(c, level)
+    if c.submodules?
+      puts "#{indent_space(level)}}"
+    end
+  end
+
+  def relation(r)
+    arrow = @default_arrow
+    puts "#{r.from.basename} #{arrow} #{r.to.basename}"
+  end
+
+  private
+
+  def indent_space(level)
+    " " * @indent * level
+  end
+end
+
+plantuml = PlanUMLExporter.new
+
 walker = context.walker
-walker.on_begin_component {|c, level|
-  scope = ""
-  if c.submodules?
-    scope = " {"
-  end
-  ls = "  " * level
-  puts "#{ls}node #{c.basename}#{scope}"
-}
-walker.on_end_component {|c, level|
-  if c.submodules?
-    ls = "  " * level
-    puts "#{ls}}"
-  end
-}
-walker.on_relation {|r|
-  puts "#{r.from.basename} -> #{r.to.basename}"
-}
+walker.on_begin_component {|c, l| plantuml.begin_component(c, l) }
+walker.on_end_component {|c, l| plantuml.end_component(c, l) }
+walker.on_relation {|r| plantuml.relation(r) }
 
 puts "@startuml"
 
 walker.walk
-
 
 puts "@enduml"
