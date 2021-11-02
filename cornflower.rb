@@ -37,7 +37,10 @@ module Cornflower
     end
 
     def register(*components)
-      init_components(components)
+      components.each { |c|
+        c.extend(@class_extension)
+        register(*c.submodules)
+      }
     end
 
     def relation(from, to)
@@ -45,19 +48,6 @@ module Cornflower
       @relations << r
       r
     end
-
-    def init_components(components)
-      components.each { |c|
-        init_component(c)
-      }
-    end
-
-    def init_component(component)
-      component.extend(@class_extension)
-      init_components(component.submodules)
-    end
-
-    private :init_components, :init_component
   end
 end
 
