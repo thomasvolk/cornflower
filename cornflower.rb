@@ -26,11 +26,11 @@ module Cornflower
 
     def initialize
       @relations = []
-      def new_connect_method(context)
-        Proc.new { |component| context.relation(self, component) }
-      end
+      connect_lr = lambda { |context| Proc.new { |component| context.relation(self, component) } }
+      connect_rl = lambda { |context| Proc.new { |component| context.relation(component, self) } }
       @class_extension = Module.new
-      @class_extension.define_method(:>>, new_connect_method(self))
+      @class_extension.define_method(:>>, connect_lr.call(self))
+      @class_extension.define_method(:<<, connect_rl.call(self))
       @class_extension.define_method(:submodules) {
         self.constants.map { |name| self.const_get name }.filter { |c| c.is_a? Module }
       }
@@ -47,6 +47,10 @@ module Cornflower
       r = Relation.new(from, to)
       @relations << r
       r
+    end
+
+    def to_s
+      "Context(relations=#{self.relations.map {|r| r.to_s}})"
     end
   end
 end
@@ -90,6 +94,6 @@ OnlineShop >> ShopDatabase
 ProductCatalogService >> ProductDatabase
 OnlineShop >> ProductCatalogService
 OnlineShop >> OrderQueue | 'send order event'
-WarehouseService >> OrderQueue | 'receive order event'
+OrderQueue << WarehouseService | 'receive order event'
 
-puts context.relations.map {|r| r.to_s}
+puts context.to_s
