@@ -14,8 +14,12 @@ module Cornflower
 
   class Context
     attr_reader :relations
+    
+    def initialize(*components)
+      @relations = []
+    end
 
-    def initialize(*components, &init_block)
+    def extend(*components)
       @relations = []
       def new_connect_method(context)
         Proc.new { |component| context.relation(self, component) }
@@ -26,12 +30,12 @@ module Cornflower
         self.constants.map { |name| self.const_get name }.filter { |c| c.is_a? Module }
       }
       init_components(components)
-      init_block.call
     end
 
     def relation(from, to)
-      @relations << Relation.new(from, to)
-      to
+      r = Relation.new(from, to)
+      @relations << r
+      r
     end
 
     def init_components(components)
@@ -44,6 +48,7 @@ module Cornflower
       component.extend(@class_extension)
       init_components(component.submodules)
     end
+
     private :init_components, :init_component
   end
 end
@@ -80,11 +85,14 @@ end
 include AWS::Kubernetes
 include AWS
 
-ctx = Context.new(AWS) {
-  OnlineShop >> ShopDatabase
-  ProductCatalogService >> ProductDatabase
-  OnlineShop >> ProductCatalogService
-  OnlineShop >> OrderQueue >> WarehouseService
-}
+ctx = Context.new
+
+ctx.extend(AWS)
+
+OnlineShop >> ShopDatabase
+ProductCatalogService >> ProductDatabase
+OnlineShop >> ProductCatalogService
+OnlineShop >> OrderQueue
+WarehouseService >> OrderQueue
 
 puts ctx.relations.map {|r| r.to_s}
