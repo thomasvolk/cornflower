@@ -155,7 +155,7 @@ walker.on_begin_component {|c, level|
     scope = " {"
   end
   ls = "  " * level
-  puts "#{ls}#{c.basename}#{scope}"
+  puts "#{ls}node #{c.basename}#{scope}"
 }
 walker.on_end_component {|c, level|
   if c.submodules?
@@ -166,5 +166,10 @@ walker.on_end_component {|c, level|
 walker.on_relation {|r|
   puts "#{r.from.basename} -> #{r.to.basename}"
 }
+
+puts "@startuml"
+
 walker.walk
 
+
+puts "@enduml"
