@@ -5,16 +5,25 @@ module Cornflower
     def initialize(from, to)
       @from = from
       @to = to
+      @description = nil
+    end
+
+    def |(description)
+      @description = description
     end
 
     def to_s
-      "Relation(#{@from} -> #{@to})"
+      d = ""
+      if !@description.nil?
+        d = " | #{@description}"
+      end
+      "Relation(#{@from} --> #{@to}#{d})"
     end
   end
 
   class Context
     attr_reader :relations
-    
+
     def initialize(*components)
       @relations = []
     end
@@ -92,7 +101,7 @@ ctx.extend(AWS)
 OnlineShop >> ShopDatabase
 ProductCatalogService >> ProductDatabase
 OnlineShop >> ProductCatalogService
-OnlineShop >> OrderQueue
-WarehouseService >> OrderQueue
+OnlineShop >> OrderQueue | 'send order event'
+WarehouseService >> OrderQueue | 'receive order event'
 
 puts ctx.relations.map {|r| r.to_s}
