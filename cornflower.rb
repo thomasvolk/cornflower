@@ -14,7 +14,7 @@ module Cornflower
 
     def to_s
       d = ""
-      if !@description.nil?
+      unless @description.nil?
         d = " | #{@description}"
       end
       "Relation(#{@from} --> #{@to}#{d})"
