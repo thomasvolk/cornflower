@@ -42,6 +42,10 @@ module Cornflower
       }
       @class_extension.define_method(:submodules?) { !self.submodules.empty? }
       @class_extension.define_method(:basename) { self.name.split('::').last }
+      @class_extension.define_method(:get) { |name, default|
+        self.class_variable_defined?(name) ? self.class_variable_get(name) : default
+      }
+      @class_extension.define_method(:component_name) { self.get(:@@name, self.basename) }
       @components = components
       register(*components)
     end
@@ -132,6 +136,7 @@ class AWS
   end
 
   class OrderQueue
+    @@name = "order_queue"
     @@shape = "queue"
   end
 
@@ -167,8 +172,8 @@ class PlanUMLExporter
     if c.submodules?
       scope = " {"
     end
-    shape = c.class_variable_defined?(:@@shape) ? c.class_variable_get(:@@shape) : @default_shape
-    puts "#{indent_space(level)}#{shape} #{c.basename}#{scope}"
+    shape = c.get(:@@shape, @default_shape)
+    puts "#{indent_space(level)}#{shape} #{c.component_name}#{scope}"
   end
 
   def end_component(c, level)
@@ -179,7 +184,7 @@ class PlanUMLExporter
 
   def relation(r)
     arrow = @default_arrow
-    puts "#{r.from.basename} #{arrow} #{r.to.basename}"
+    puts "#{r.from.component_name} #{arrow} #{r.to.component_name}"
   end
 
   private
