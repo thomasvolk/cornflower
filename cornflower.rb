@@ -113,49 +113,45 @@ end
 #-------------------------------
 
 
-module AWS
-  SHAPE = "cloud"
+class AWS
+  @@shape = "cloud"
 
-  module Kubernetes
-    SHAPE = "node"
+  class Kubernetes
 
     class OnlineShop
-      SHAPE = "hexagon"
+      @@shape = "hexagon"
     end
 
     class ProductCatalogService
-      SHAPE = "hexagon"
+      @@shape = "hexagon"
     end
 
     class WarehouseService
-      SHAPE = "hexagon"
+      @@shape = "hexagon"
     end
   end
 
-  module OrderQueue
-    SHAPE = "queue"
+  class OrderQueue
+    @@shape = "queue"
   end
 
   class ShopDatabase
-    SHAPE = "database"
+    @@shape = "database"
   end
 
   class ProductDatabase
-    SHAPE = "database"
+    @@shape = "database"
   end
 
 end
 
-include AWS::Kubernetes
-include AWS
-
 context = Cornflower::context(AWS)
 
-OnlineShop >> ShopDatabase
-ProductCatalogService >> ProductDatabase
-OnlineShop >> ProductCatalogService
-OnlineShop >> OrderQueue | 'send order event'
-OrderQueue << WarehouseService | 'receive order event'
+AWS::Kubernetes::OnlineShop >> AWS::ShopDatabase
+AWS::Kubernetes::ProductCatalogService >> AWS::ProductDatabase
+AWS::Kubernetes::OnlineShop >> AWS::Kubernetes::ProductCatalogService
+AWS::Kubernetes::OnlineShop >> AWS::OrderQueue | 'send order event'
+AWS::OrderQueue << AWS::Kubernetes::WarehouseService | 'receive order event'
 
 class PlanUMLExporter
   attr_accessor :default_shape, :indent, :default_arrow
@@ -171,7 +167,7 @@ class PlanUMLExporter
     if c.submodules?
       scope = " {"
     end
-    shape = c.const_defined?(:SHAPE) ? c::SHAPE : @default_shape
+    shape = c.class_variable_defined?(:@@shape) ? c.class_variable_get(:@@shape) : @default_shape
     puts "#{indent_space(level)}#{shape} #{c.basename}#{scope}"
   end
 
