@@ -95,18 +95,29 @@ module Cornflower
       @on_relation = block
     end
 
-    def walk
-      traverse_components(0, @context.components)
-      @context.relations.each { |r| @on_relation.call(r) }
+    def walk(filter = ->(c) {true})
+      traverse_components(filter, 0, @context.components)
+      @context.relations.each { |r|
+        if filter.call(r.from) && filter.call(r.to)
+          @on_relation.call(r)
+        end
+      }
     end
 
     private
 
-    def traverse_components(level, components)
+    def traverse_components(filter, level, components)
       components.each { |c|
-        @on_begin_component.call(c, level)
-        traverse_components(level + 1, c.submodules)
-        @on_end_component.call(c, level)
+        filter_match = filter.call(c)
+        new_level = level
+        if filter_match
+          new_level = new_level + 1
+          @on_begin_component.call(c, level)
+        end
+        traverse_components(filter, new_level, c.submodules)
+        if filter_match
+          @on_end_component.call(c, level)
+        end
       }
     end
 
@@ -123,28 +134,34 @@ class AWS
   class Kubernetes
 
     class OnlineShop
+      @@tags = [:dev, :shop]
       @@shape = "hexagon"
     end
 
     class ProductCatalogService
+      @@tags = [:dev]
       @@shape = "hexagon"
     end
 
     class WarehouseService
+      @@tags = [:dev]
       @@shape = "hexagon"
     end
   end
 
   class OrderQueue
+    @@tags = [:dev]
     @@name = "order_queue"
     @@shape = "queue"
   end
 
   class ShopDatabase
+    @@tags = [:dev, :shop]
     @@shape = "database"
   end
 
   class ProductDatabase
+    @@tags = [:dev]
     @@shape = "database"
   end
 
@@ -203,6 +220,10 @@ walker.on_relation {|r| plantuml.relation(r) }
 
 puts "@startuml"
 
-walker.walk
+def tag_filter(*tags)
+  ->(c) { !c.get(:@@tags, []).filter {|t| tags.include? t }.empty? }
+end
+
+walker.walk(tag_filter(:dev))
 
 puts "@enduml"
