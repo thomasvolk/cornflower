@@ -1,5 +1,11 @@
 module Cornflower
 
+  module Filter
+    def self.tags(*tags)
+      ->(c) { !c.get(:@@tags, []).filter {|t| tags.include? t }.empty? }
+    end
+  end
+
   def self.context(*components)
     Context.new(*components)
   end
@@ -123,107 +129,3 @@ module Cornflower
 
   end
 end
-
-
-#-------------------------------
-
-
-class AWS
-  @@shape = "cloud"
-
-  class Kubernetes
-
-    class OnlineShop
-      @@tags = [:dev, :shop]
-      @@shape = "hexagon"
-    end
-
-    class ProductCatalogService
-      @@tags = [:dev]
-      @@shape = "hexagon"
-    end
-
-    class WarehouseService
-      @@tags = [:dev]
-      @@shape = "hexagon"
-    end
-  end
-
-  class OrderQueue
-    @@tags = [:dev]
-    @@name = "order_queue"
-    @@shape = "queue"
-  end
-
-  class ShopDatabase
-    @@tags = [:dev, :shop]
-    @@shape = "database"
-  end
-
-  class ProductDatabase
-    @@tags = [:dev]
-    @@shape = "database"
-  end
-
-end
-
-context = Cornflower::context(AWS)
-
-AWS::Kubernetes::OnlineShop >> AWS::ShopDatabase
-AWS::Kubernetes::ProductCatalogService >> AWS::ProductDatabase
-AWS::Kubernetes::OnlineShop >> AWS::Kubernetes::ProductCatalogService
-AWS::Kubernetes::OnlineShop >> AWS::OrderQueue | 'send order event'
-AWS::OrderQueue << AWS::Kubernetes::WarehouseService | 'receive order event'
-
-class PlanUMLExporter
-  attr_accessor :default_shape, :indent, :default_arrow
-
-  def initialize
-    @default_shape = "node"
-    @indent = 2
-    @default_arrow = "-->"
-  end
-
-  def begin_component(c, level)
-    scope = ""
-    if c.submodules?
-      scope = " {"
-    end
-    shape = c.get(:@@shape, @default_shape)
-    puts "#{indent_space(level)}#{shape} #{c.component_name}#{scope}"
-  end
-
-  def end_component(c, level)
-    if c.submodules?
-      puts "#{indent_space(level)}}"
-    end
-  end
-
-  def relation(r)
-    arrow = @default_arrow
-    puts "#{r.from.component_name} #{arrow} #{r.to.component_name}"
-  end
-
-  private
-
-  def indent_space(level)
-    " " * @indent * level
-  end
-end
-
-plantuml = PlanUMLExporter.new
-
-walker = context.walker
-walker.on_begin_component {|c, l| plantuml.begin_component(c, l) }
-walker.on_end_component {|c, l| plantuml.end_component(c, l) }
-walker.on_relation {|r| plantuml.relation(r) }
-
-puts "@startuml"
-
-def tag_filter(*tags)
-  ->(c) { !c.get(:@@tags, []).filter {|t| tags.include? t }.empty? }
-end
-
-walker.walk(tag_filter(:dev))
-
-puts "@enduml"
