@@ -10,15 +10,52 @@ class PlantUmlExportTest < Minitest::Test
 
     plantuml = Cornflower::Export::PlanUMLExporter.new
 
-    walker = context.walker
-    walker.on_begin_component {|c, l| plantuml.begin_component(c, l) }
-    walker.on_end_component {|c, l| plantuml.end_component(c, l) }
-    walker.on_relation {|r| plantuml.relation(r) }
+    s = StringIO.new
 
+    plantuml.export(context, s)
 
-    walker.walk(Cornflower::Filter::tags(:dev))
+    assert_equal s.string, """cloud CloudProvider {
+  queue order_queue
+  node Kubernetes {
+    hexagon ProductCatalogService
+    hexagon OnlineShop
+    hexagon WarehouseService
+  }
+  database ShopDatabase
+  database ProductDatabase
+}
+OnlineShop --> ShopDatabase
+ProductCatalogService --> ProductDatabase
+OnlineShop --> ProductCatalogService
+OnlineShop --> order_queue
+WarehouseService --> order_queue
+"""
 
-    walker.walk
+  end
+
+  def test_plantuml_with_filter
+
+    context = TestModel::context
+
+    plantuml = Cornflower::Export::PlanUMLExporter.new
+
+    s = StringIO.new
+
+    plantuml.export(context, s, Cornflower::Filter::tags(:dev))
+
+    assert_equal s.string, """queue order_queue
+hexagon ProductCatalogService
+hexagon OnlineShop
+hexagon WarehouseService
+database ShopDatabase
+database ProductDatabase
+OnlineShop --> ShopDatabase
+ProductCatalogService --> ProductDatabase
+OnlineShop --> ProductCatalogService
+OnlineShop --> order_queue
+WarehouseService --> order_queue
+"""
+
 
   end
 

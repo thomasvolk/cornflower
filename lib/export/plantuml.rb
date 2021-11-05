@@ -15,18 +15,26 @@ module Cornflower
           scope = " {"
         end
         shape = c.get(:@@shape, @default_shape)
-        puts "#{indent_space(level)}#{shape} #{c.component_name}#{scope}"
+        "#{indent_space(level)}#{shape} #{c.component_name}#{scope}\n"
       end
 
       def end_component(c, level)
         if c.submodules?
-          puts "#{indent_space(level)}}"
+          return "#{indent_space(level)}}\n"
         end
       end
 
       def relation(r)
         arrow = @default_arrow
-        puts "#{r.from.component_name} #{arrow} #{r.to.component_name}"
+        "#{r.from.component_name} #{arrow} #{r.to.component_name}\n"
+      end
+
+      def export(context, out, filter = ->(c){true})
+        walker = context.walker
+        walker.on_begin_component {|c, l| out << self.begin_component(c, l) }
+        walker.on_end_component {|c, l| out << self.end_component(c, l) }
+        walker.on_relation {|r| out << self.relation(r) }
+        walker.walk filter
       end
 
       private
@@ -34,6 +42,7 @@ module Cornflower
       def indent_space(level)
         " " * @indent * level
       end
+
     end
 
   end
