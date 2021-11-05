@@ -41,15 +41,11 @@ module TestModel
 
   end
 
-  @@context = Cornflower::context(CloudProvider)
+  Cornflower::register(CloudProvider)
 
   CloudProvider::Kubernetes::OnlineShop >> CloudProvider::ShopDatabase
   CloudProvider::Kubernetes::ProductCatalogService >> CloudProvider::ProductDatabase
   CloudProvider::Kubernetes::OnlineShop >> CloudProvider::Kubernetes::ProductCatalogService
   CloudProvider::Kubernetes::OnlineShop >> CloudProvider::OrderQueue | 'send order event'
   CloudProvider::OrderQueue << CloudProvider::Kubernetes::WarehouseService | 'receive order event'
-
-  def self.context
-    @@context
-  end
 end

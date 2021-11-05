@@ -6,8 +6,8 @@ module Cornflower
     end
   end
 
-  def self.context(*components)
-    Context.new(*components)
+  def self.register(root)
+    Context.new(root)
   end
 
   class Relation
@@ -34,13 +34,13 @@ module Cornflower
   end
 
   class Context
-    attr_reader :relations, :components
+    attr_reader :relations, :root
 
-    def initialize(*components)
+    def initialize(root)
       @relations = []
+      @class_extension = Module.new
       connect_lr = lambda { |context| Proc.new { |component| context.relation(self, component) } }
       connect_rl = lambda { |context| Proc.new { |component| context.relation(component, self) } }
-      @class_extension = Module.new
       @class_extension.define_method(:>>, connect_lr.call(self))
       @class_extension.define_method(:<<, connect_rl.call(self))
       @class_extension.define_method(:submodules) {
@@ -52,8 +52,13 @@ module Cornflower
         self.class_variable_defined?(name) ? self.class_variable_get(name) : default
       }
       @class_extension.define_method(:component_name) { self.get(:@@name, self.basename) }
-      @components = components
-      register(*components)
+
+      @root = root
+      root_class_extension = Module.new
+      return_context = lambda { |context| Proc.new {context} }
+      root_class_extension.define_method(:context, return_context.call(self))
+      @root.extend(root_class_extension)
+      register(@root)
     end
 
     def relation(from, to)
@@ -102,7 +107,7 @@ module Cornflower
     end
 
     def walk(filter = ->(c) {true})
-      traverse_components(filter, 0, @context.components)
+      traverse_components(filter, 0, @context.root)
       @context.relations.each { |r|
         if filter.call(r.from) && filter.call(r.to)
           @on_relation.call(r)
@@ -112,7 +117,7 @@ module Cornflower
 
     private
 
-    def traverse_components(filter, level, components)
+    def traverse_components(filter, level, *components)
       components.each { |c|
         filter_match = filter.call(c)
         new_level = level
@@ -120,7 +125,7 @@ module Cornflower
           new_level = new_level + 1
           @on_begin_component.call(c, level)
         end
-        traverse_components(filter, new_level, c.submodules)
+        traverse_components(filter, new_level, *c.submodules)
         if filter_match
           @on_end_component.call(c, level)
         end

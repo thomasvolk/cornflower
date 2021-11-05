@@ -6,22 +6,20 @@ require 'export/plantuml'
 class PlantUmlExportTest < Minitest::Test
 
   def test_plantuml
-    context = TestModel::context
-
     plantuml = Cornflower::Export::PlanUMLExporter.new
 
     s = StringIO.new
 
-    plantuml.export(context, s)
+    plantuml.export(TestModel::CloudProvider, s)
 
-    assert_equal s.string, """cloud CloudProvider {
+    assert_equal """cloud CloudProvider {
   queue order_queue
+  database ShopDatabase
   node Kubernetes {
-    hexagon ProductCatalogService
     hexagon OnlineShop
     hexagon WarehouseService
+    hexagon ProductCatalogService
   }
-  database ShopDatabase
   database ProductDatabase
 }
 OnlineShop --> ShopDatabase
@@ -29,32 +27,29 @@ ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue
 WarehouseService --> order_queue
-"""
+""", s.string
 
   end
 
   def test_plantuml_with_filter
-
-    context = TestModel::context
-
     plantuml = Cornflower::Export::PlanUMLExporter.new
 
     s = StringIO.new
 
-    plantuml.export(context, s, Cornflower::Filter::tags(:dev))
+    plantuml.export(TestModel::CloudProvider, s, Cornflower::Filter::tags(:dev))
 
-    assert_equal s.string, """queue order_queue
-hexagon ProductCatalogService
+    assert_equal """queue order_queue
+database ShopDatabase
 hexagon OnlineShop
 hexagon WarehouseService
-database ShopDatabase
+hexagon ProductCatalogService
 database ProductDatabase
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue
 WarehouseService --> order_queue
-"""
+""", s.string
 
 
   end

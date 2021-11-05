@@ -29,8 +29,8 @@ module Cornflower
         "#{r.from.component_name} #{arrow} #{r.to.component_name}\n"
       end
 
-      def export(context, out, filter = ->(c){true})
-        walker = context.walker
+      def export(root, out, filter = ->(c){true})
+        walker = root.context.walker
         walker.on_begin_component {|c, l| out << self.begin_component(c, l) }
         walker.on_end_component {|c, l| out << self.end_component(c, l) }
         walker.on_relation {|r| out << self.relation(r) }
