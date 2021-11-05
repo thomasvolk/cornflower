@@ -44,7 +44,7 @@ module Cornflower
       @class_extension.define_method(:>>, connect_lr.call(self))
       @class_extension.define_method(:<<, connect_rl.call(self))
       @class_extension.define_method(:submodules) {
-        self.constants.map { |name| self.const_get name }.filter { |c| c.is_a? Module }
+        self.constants.map { |name| self.const_get name }.filter { |c| c.is_a? Module }.sort { |a,b| a.name <=> b.name }
       }
       @class_extension.define_method(:submodules?) { !self.submodules.empty? }
       @class_extension.define_method(:basename) { self.name.split('::').last }

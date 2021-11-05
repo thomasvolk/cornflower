@@ -13,14 +13,14 @@ class PlantUmlExportTest < Minitest::Test
     plantuml.export(TestModel::CloudProvider, s)
 
     assert_equal """cloud CloudProvider {
-  queue order_queue
   node Kubernetes {
-    hexagon WarehouseService
-    hexagon ProductCatalogService
     hexagon OnlineShop
+    hexagon ProductCatalogService
+    hexagon WarehouseService
   }
-  database ShopDatabase
+  queue order_queue
   database ProductDatabase
+  database ShopDatabase
 }
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
@@ -38,12 +38,12 @@ WarehouseService --> order_queue
 
     plantuml.export(TestModel::CloudProvider, s, Cornflower::Filter::tags(:dev))
 
-    assert_equal """queue order_queue
-hexagon WarehouseService
+    assert_equal """hexagon OnlineShop
 hexagon ProductCatalogService
-hexagon OnlineShop
-database ShopDatabase
+hexagon WarehouseService
+queue order_queue
 database ProductDatabase
+database ShopDatabase
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
