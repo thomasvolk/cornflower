@@ -107,7 +107,7 @@ module Cornflower
     end
 
     def walk(filter = ->(c) {true})
-      traverse_components(filter, 0, @context.root)
+      traverse_components(filter, 0, [@context.root])
       @context.relations.each { |r|
         if filter.call(r.from) && filter.call(r.to)
           @on_relation.call(r)
@@ -117,7 +117,7 @@ module Cornflower
 
     private
 
-    def traverse_components(filter, level, *components)
+    def traverse_components(filter, level, components)
       components.each { |c|
         filter_match = filter.call(c)
         new_level = level
@@ -125,7 +125,7 @@ module Cornflower
           new_level = new_level + 1
           @on_begin_component.call(c, level)
         end
-        traverse_components(filter, new_level, *c.submodules)
+        traverse_components(filter, new_level, c.submodules)
         if filter_match
           @on_end_component.call(c, level)
         end
