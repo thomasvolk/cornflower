@@ -13,11 +13,11 @@ module TestModel
       ShopDatabase(:shape => :database, :tags => [:dev, :shop])
       ProductDatabase(:shape => :database, :tags => [:dev])
 
-      Kubernetes.OnlineShop >> ShopDatabase
-      Kubernetes.ProductCatalogService >> ProductDatabase
-      Kubernetes.OnlineShop >> Kubernetes.ProductCatalogService
-      Kubernetes.OnlineShop >> OrderQueue
-      OrderQueue << Kubernetes.WarehouseService
+      Kubernetes().OnlineShop >> ShopDatabase()
+      Kubernetes().ProductCatalogService >> ProductDatabase()
+      Kubernetes().OnlineShop >> Kubernetes().ProductCatalogService()
+      Kubernetes().OnlineShop >> OrderQueue()
+      OrderQueue() << Kubernetes().WarehouseService
     }
   end
 

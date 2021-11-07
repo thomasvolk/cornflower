@@ -1,9 +1,16 @@
 module Cornflower
 
   class Node
+    def initialize
+      @children = {}
+    end
     def node(name, attributes = {}, &block)
+      if @children.has_key? name
+        return @children[name]
+      end
       puts "#{self}: new node #{name}"
       n = Node.new()
+      @children[name] = n
       if block_given?
         n.instance_eval(&block)
       end
