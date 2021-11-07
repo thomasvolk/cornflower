@@ -1,5 +1,12 @@
 module Cornflower
 
+  def self.model(&block)
+  end
+
+
+  # --- old ---
+
+
   module Filter
     def self.tags(*tags)
       ->(c) { !c.get(:@@tags, []).filter {|t| tags.include? t }.empty? }

@@ -2,50 +2,23 @@ require 'cornflower'
 
 module TestModel
 
-  class CloudProvider
-    @@shape = "cloud"
+  MODEL = Cornflower::model do
+    CloudProvider(:shape => :cloud) {
+      Kubernetes {
+        OnlineShop(:shape => hexagon, :tags => [:dev, :shop])
+        ProductCatalogService(:shape => :hexagon, :tags => [:dev])
+        WarehouseService(:shape => :hexagon, :tags => [:dev])
+      }
+      OrderQueue(:name => "order_queue", :shape => :queue, :tags => [:dev])
+      ShopDatabase(:shape => :database, :tags => [:dev, :shop])
+      ProductDatabase(:shape => :database, :tags => [:dev])
 
-    class Kubernetes
-
-      class OnlineShop
-        @@tags = [:dev, :shop]
-        @@shape = "hexagon"
-      end
-
-      class ProductCatalogService
-        @@tags = [:dev]
-        @@shape = "hexagon"
-      end
-
-      class WarehouseService
-        @@tags = [:dev]
-        @@shape = "hexagon"
-      end
-    end
-
-    class OrderQueue
-      @@tags = [:dev]
-      @@name = "order_queue"
-      @@shape = "queue"
-    end
-
-    class ShopDatabase
-      @@tags = [:dev, :shop]
-      @@shape = "database"
-    end
-
-    class ProductDatabase
-      @@tags = [:dev]
-      @@shape = "database"
-    end
-
+      Kubernetes.OnlineShop >> ShopDatabase
+      Kubernetes.ProductCatalogService >> ProductDatabase
+      Kubernetes.OnlineShop >> Kubernetes.ProductCatalogService
+      Kubernetes.OnlineShop >> OrderQueue
+      OrderQueue << Kubernetes.WarehouseService
+    }
   end
 
-  Cornflower::register(CloudProvider)
-
-  CloudProvider::Kubernetes::OnlineShop >> CloudProvider::ShopDatabase
-  CloudProvider::Kubernetes::ProductCatalogService >> CloudProvider::ProductDatabase
-  CloudProvider::Kubernetes::OnlineShop >> CloudProvider::Kubernetes::ProductCatalogService
-  CloudProvider::Kubernetes::OnlineShop >> CloudProvider::OrderQueue | 'send order event'
-  CloudProvider::OrderQueue << CloudProvider::Kubernetes::WarehouseService | 'receive order event'
 end

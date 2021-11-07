@@ -1,4 +1,5 @@
 module Cornflower
+  
   module Export
     class PlanUMLExporter
       attr_accessor :default_shape, :indent, :default_arrow

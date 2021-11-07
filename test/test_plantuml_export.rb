@@ -10,7 +10,7 @@ class PlantUmlExportTest < Minitest::Test
 
     s = StringIO.new
 
-    plantuml.export(TestModel::CloudProvider, s)
+    plantuml.export(TestModel::MODEL, s)
 
     assert_equal """cloud CloudProvider {
   node Kubernetes {
@@ -36,7 +36,7 @@ WarehouseService --> order_queue
 
     s = StringIO.new
 
-    plantuml.export(TestModel::CloudProvider, s, Cornflower::Filter::tags(:dev))
+    plantuml.export(TestModel::MODEL, s, Cornflower::Filter::tags(:dev))
 
     assert_equal """hexagon OnlineShop
 hexagon ProductCatalogService
