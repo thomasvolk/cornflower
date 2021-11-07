@@ -1,5 +1,9 @@
 module Cornflower
 
+  class Model
+    
+  end
+
   def self.model(&block)
   end
 
