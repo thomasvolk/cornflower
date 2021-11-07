@@ -1,10 +1,30 @@
 module Cornflower
 
+  class Node
+    def node(name, attributes = {}, &block)
+      puts "#{self}: new node #{name}"
+      n = Node.new()
+      if block_given?
+        n.instance_eval(&block)
+      end
+      n
+    end
+
+    alias method_missing node
+
+  end
+
   class Model
-    
+    attr_reader :root
+
+    def initialize(&block)
+      @root = Node.new
+      @root.instance_eval(&block)
+    end
   end
 
   def self.model(&block)
+    Model.new(&block)
   end
 
 
