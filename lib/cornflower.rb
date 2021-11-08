@@ -1,20 +1,32 @@
 module Cornflower
 
   class Node
-    def initialize
+    attr_reader :name, :children
+
+    def initialize(name)
+      @name = name
       @children = {}
     end
+
     def node(name, attributes = {}, &block)
       if @children.has_key? name
         return @children[name]
       end
       puts "#{self}: new node #{name}"
-      n = Node.new()
+      n = Node.new name
       @children[name] = n
       if block_given?
         n.instance_eval(&block)
       end
       n
+    end
+
+    def <<(from)
+      puts "#{self.name} << #{from.name}"
+    end
+
+    def >>(to)
+      puts "#{self.name} >> #{to.name}"
     end
 
     alias method_missing node
@@ -24,14 +36,14 @@ module Cornflower
   class Model
     attr_reader :root
 
-    def initialize(&block)
-      @root = Node.new
+    def initialize(name, &block)
+      @root = Node.new name
       @root.instance_eval(&block)
     end
   end
 
-  def self.model(&block)
-    Model.new(&block)
+  def self.model(name, &block)
+    Model.new(name, &block)
   end
 
 

@@ -2,7 +2,7 @@ require 'cornflower'
 
 module TestModel
 
-  MODEL = Cornflower::model do
+  MODEL = Cornflower::model("example") do
     CloudProvider(:shape => :cloud) {
       Kubernetes {
         OnlineShop(:shape => hexagon, :tags => [:dev, :shop])
