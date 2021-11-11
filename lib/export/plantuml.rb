@@ -12,28 +12,28 @@ module Cornflower
 
       def begin_component(c, level)
         scope = ""
-        if c.submodules?
+        if !c.children.empty?
           scope = " {"
         end
-        shape = c.get(:@@shape, @default_shape)
-        "#{indent_space(level)}#{shape} #{c.component_name}#{scope}\n"
+        shape = c.attributes.fetch(:shape, @default_shape)
+        "#{indent_space(level)}#{shape} #{c.name}#{scope}\n"
       end
 
       def end_component(c, level)
-        if c.submodules?
+        if !c.children.empty?
           return "#{indent_space(level)}}\n"
         end
       end
 
       def relation(r)
         arrow = @default_arrow
-        "#{r.from.component_name} #{arrow} #{r.to.component_name}\n"
+        "#{r.from.name} #{arrow} #{r.to.name}\n"
       end
 
-      def export(root, out, filter = ->(c){true})
-        walker = root.context.walker
-        walker.on_begin_component {|c, l| out << self.begin_component(c, l) }
-        walker.on_end_component {|c, l| out << self.end_component(c, l) }
+      def export(model, out, filter = ->(c){true})
+        walker = model.walker
+        walker.on_begin_node {|c, l| out << self.begin_component(c, l) }
+        walker.on_end_node {|c, l| out << self.end_component(c, l) }
         walker.on_relation {|r| out << self.relation(r) }
         walker.walk filter
       end

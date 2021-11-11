@@ -1,44 +1,71 @@
 module Cornflower
 
   class Node
-    attr_reader :name, :children
+    attr_reader :name, :sealed, :attributes
 
-    def initialize(name)
-      @name = name
+    def initialize(model, name, attributes = {})
+      @name = attributes.fetch(:name, name)
       @children = {}
+      @model = model
+      @sealed = false
+      @attributes = attributes
     end
 
-    def node(name, attributes = {}, &block)
+    def add_node(name, attributes = {}, &block)
       if @children.has_key? name
         return @children[name]
       end
-      puts "#{self}: new node #{name}"
-      n = Node.new name
-      @children[name] = n
-      if block_given?
-        n.instance_eval(&block)
+      if @sealed
+        raise NoMethodError.new name
+      else        
+        n = Node.new @model, name, attributes
+        @children[name] = n
+        if block_given?
+          n.instance_eval(&block)
+        end
+        return n
       end
-      n
     end
 
     def <<(from)
-      puts "#{self.name} << #{from.name}"
+      @model.add_relation from, self
     end
 
     def >>(to)
-      puts "#{self.name} >> #{to.name}"
+      @model.add_relation self, to
     end
 
-    alias method_missing node
+    def children
+      @children.values
+    end
+
+    def sealed=(val)
+      @sealed = true
+      @children.each {|n, c| c.sealed = val}
+    end
+
+    alias method_missing add_node
 
   end
 
   class Model
-    attr_reader :root
+    attr_reader :root, :relations
 
     def initialize(name, &block)
-      @root = Node.new name
+      @relations = []
+      @root = Node.new self, name
       @root.instance_eval(&block)
+      @root.sealed = true
+    end
+
+    def add_relation(from, to)
+      r = Relation.new from, to
+      @relations << r
+      r
+    end 
+
+    def walker
+      ModelWalker.new self
     end
   end
 
@@ -46,18 +73,10 @@ module Cornflower
     Model.new(name, &block)
   end
 
-
-  # --- old ---
-
-
   module Filter
     def self.tags(*tags)
-      ->(c) { !c.get(:@@tags, []).filter {|t| tags.include? t }.empty? }
+      ->(c) { !c.attributes.fetch(:tags, []).filter {|t| tags.include? t }.empty? }
     end
-  end
-
-  def self.register(root)
-    Context.new(root)
   end
 
   class Relation
@@ -83,73 +102,20 @@ module Cornflower
     end
   end
 
-  class Context
-    attr_reader :relations, :root
-
-    def initialize(root)
-      @relations = []
-      @class_extension = Module.new
-      connect_lr = lambda { |context| Proc.new { |component| context.relation(self, component) } }
-      connect_rl = lambda { |context| Proc.new { |component| context.relation(component, self) } }
-      @class_extension.define_method(:>>, connect_lr.call(self))
-      @class_extension.define_method(:<<, connect_rl.call(self))
-      @class_extension.define_method(:submodules) {
-        self.constants.map { |name| self.const_get name }.filter { |c| c.is_a? Module }.sort { |a,b| a.name <=> b.name }
-      }
-      @class_extension.define_method(:submodules?) { !self.submodules.empty? }
-      @class_extension.define_method(:basename) { self.name.split('::').last }
-      @class_extension.define_method(:get) { |name, default|
-        self.class_variable_defined?(name) ? self.class_variable_get(name) : default
-      }
-      @class_extension.define_method(:component_name) { self.get(:@@name, self.basename) }
-
-      @root = root
-      root_class_extension = Module.new
-      return_context = lambda { |context| Proc.new {context} }
-      root_class_extension.define_method(:context, return_context.call(self))
-      @root.extend(root_class_extension)
-      register(@root)
-    end
-
-    def relation(from, to)
-      r = Relation.new(from, to)
-      @relations << r
-      r
-    end
-
-    def walker
-      ContextWalker.new self
-    end
-
-    def to_s
-      "Context(relations=#{self.relations.map {|r| r.to_s}})"
-    end
-
-    private
-
-    def register(*components)
-      components.each { |c|
-        c.extend(@class_extension)
-        register(*c.submodules)
-      }
-    end
-
-  end
-
-  class ContextWalker
-    def initialize(context)
-      @context = context
-      @on_begin_component = proc {|c| }
-      @on_end_component = proc {|c| }
+  class ModelWalker
+    def initialize(model)
+      @model = model
+      @on_begin_node = proc {|c| }
+      @on_end_node = proc {|c| }
       @on_relation = proc {|r| }
     end
 
-    def on_begin_component(&block)
-      @on_begin_component = block
+    def on_begin_node(&block)
+      @on_begin_node = block
     end
 
-    def on_end_component(&block)
-      @on_end_component = block
+    def on_end_node(&block)
+      @on_end_node = block
     end
 
     def on_relation(&block)
@@ -157,8 +123,8 @@ module Cornflower
     end
 
     def walk(filter = ->(c) {true})
-      traverse_components(filter, 0, [@context.root])
-      @context.relations.each { |r|
+      traverse_nodes(filter, 0, @model.root.children)
+      @model.relations.each { |r|
         if filter.call(r.from) && filter.call(r.to)
           @on_relation.call(r)
         end
@@ -167,17 +133,17 @@ module Cornflower
 
     private
 
-    def traverse_components(filter, level, components)
-      components.each { |c|
-        filter_match = filter.call(c)
+    def traverse_nodes(filter, level, nodes)
+      nodes.each { |n|
+        filter_match = filter.call(n)
         new_level = level
         if filter_match
           new_level = new_level + 1
-          @on_begin_component.call(c, level)
+          @on_begin_node.call(n, level)
         end
-        traverse_components(filter, new_level, c.submodules)
+        traverse_nodes(filter, new_level, n.children)
         if filter_match
-          @on_end_component.call(c, level)
+          @on_end_node.call(n, level)
         end
       }
     end

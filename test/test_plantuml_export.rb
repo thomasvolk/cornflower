@@ -19,8 +19,8 @@ class PlantUmlExportTest < Minitest::Test
     hexagon WarehouseService
   }
   queue order_queue
-  database ProductDatabase
   database ShopDatabase
+  database ProductDatabase
 }
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
@@ -42,8 +42,8 @@ WarehouseService --> order_queue
 hexagon ProductCatalogService
 hexagon WarehouseService
 queue order_queue
-database ProductDatabase
 database ShopDatabase
+database ProductDatabase
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService

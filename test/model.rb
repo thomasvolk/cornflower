@@ -5,7 +5,7 @@ module TestModel
   MODEL = Cornflower::model("example") do
     CloudProvider(:shape => :cloud) {
       Kubernetes {
-        OnlineShop(:shape => hexagon, :tags => [:dev, :shop])
+        OnlineShop(:shape => :hexagon, :tags => [:dev, :shop])
         ProductCatalogService(:shape => :hexagon, :tags => [:dev])
         WarehouseService(:shape => :hexagon, :tags => [:dev])
       }
