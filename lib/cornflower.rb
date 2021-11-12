@@ -1,14 +1,10 @@
 module Cornflower
 
-  class Node
-    attr_reader :name, :sealed, :attributes
-
-    def initialize(model, name, attributes = {})
-      @name = attributes.fetch(:name, name)
+  class AbstractNode
+    def initialize(model)
       @children = {}
-      @model = model
       @sealed = false
-      @attributes = attributes
+      @model = model
     end
 
     def add_node(name, attributes = {}, &block)
@@ -27,6 +23,28 @@ module Cornflower
       end
     end
 
+    def children
+      @children.values
+    end
+
+    def sealed=(val)
+      @sealed = val
+      @children.each {|n, c| c.sealed = val}
+    end
+
+    alias method_missing add_node
+
+  end
+
+  class Node < AbstractNode
+    attr_reader :name, :sealed, :attributes
+
+    def initialize(model, name, attributes = {})
+      @name = attributes.fetch(:name, name)
+      @attributes = attributes
+      super(model)
+    end
+
     def <<(from)
       @model.add_relation from, self
     end
@@ -35,27 +53,16 @@ module Cornflower
       @model.add_relation self, to
     end
 
-    def children
-      @children.values
-    end
-
-    def sealed=(val)
-      @sealed = true
-      @children.each {|n, c| c.sealed = val}
-    end
-
-    alias method_missing add_node
-
   end
 
-  class Model
+  class Model < AbstractNode
     attr_reader :root, :relations
 
-    def initialize(name, &block)
+    def initialize(&block)
       @relations = []
-      @root = Node.new self, name
-      @root.instance_eval(&block)
-      @root.sealed = true
+      super(self)
+      self.instance_eval(&block)
+      self.sealed = true
     end
 
     def add_relation(from, to)
@@ -69,8 +76,8 @@ module Cornflower
     end
   end
 
-  def self.model(name, &block)
-    Model.new(name, &block)
+  def self.model(&block)
+    Model.new(&block)
   end
 
   module Filter
@@ -123,7 +130,7 @@ module Cornflower
     end
 
     def walk(filter = ->(c) {true})
-      traverse_nodes(filter, 0, @model.root.children)
+      traverse_nodes(filter, 0, @model.children)
       @model.relations.each { |r|
         if filter.call(r.from) && filter.call(r.to)
           @on_relation.call(r)
