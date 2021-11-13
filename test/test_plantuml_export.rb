@@ -1,7 +1,6 @@
 require 'minitest/autorun'
 require 'model'
 require 'cornflower'
-require 'export/plantuml'
 
 class PlantUmlExportTest < Minitest::Test
 

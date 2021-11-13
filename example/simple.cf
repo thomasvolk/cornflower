@@ -1,0 +1,12 @@
+Cornflower::Model.new do
+  home_lan do
+    router
+    windows_desktop
+    raspberrypi
+    iphone
+
+    iphone >> router
+    raspberrypi >> router
+    windows_desktop >> router
+  end
+end

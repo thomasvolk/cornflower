@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require 'cornflower'
+require 'stringio'
+
+model = eval File.read(ARGV[0])
+
+plantuml = Cornflower::Export::PlanUMLExporter.new
+
+s = StringIO.new
+
+plantuml.export(model, s)
+
+puts s.string
