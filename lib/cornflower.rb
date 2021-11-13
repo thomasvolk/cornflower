@@ -76,10 +76,6 @@ module Cornflower
     end
   end
 
-  def self.model(&block)
-    Model.new(&block)
-  end
-
   module Filter
     def self.tags(*tags)
       ->(c) { !c.attributes.fetch(:tags, []).filter {|t| tags.include? t }.empty? }
