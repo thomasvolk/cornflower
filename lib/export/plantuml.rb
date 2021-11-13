@@ -27,7 +27,8 @@ module Cornflower
 
       def relation(r)
         arrow = @default_arrow
-        "#{r.from.name} #{arrow} #{r.to.name}\n"
+        description = r.has_description? ? " : #{r.description}" : ""
+        "#{r.from.name} #{arrow} #{r.to.name}#{description}\n"
       end
 
       def export(model, out, filter = ->(c){true})

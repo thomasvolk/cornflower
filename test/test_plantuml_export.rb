@@ -25,8 +25,8 @@ class PlantUmlExportTest < Minitest::Test
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
-OnlineShop --> order_queue
-WarehouseService --> order_queue
+OnlineShop --> order_queue : push order
+WarehouseService --> order_queue : pull order
 """, s.string
 
   end
@@ -47,8 +47,8 @@ database ProductDatabase
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
-OnlineShop --> order_queue
-WarehouseService --> order_queue
+OnlineShop --> order_queue : push order
+WarehouseService --> order_queue : pull order
 """, s.string
 
 

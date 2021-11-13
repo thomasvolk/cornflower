@@ -88,6 +88,7 @@ module Cornflower
 
   class Relation
     attr_reader :from, :to
+    attr_accessor :description
 
     def initialize(from, to)
       @from = from
@@ -98,6 +99,10 @@ module Cornflower
     def |(description)
       @description = description
       self
+    end
+
+    def has_description?
+      @description != nil
     end
 
     def to_s
