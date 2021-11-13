@@ -1,12 +1,14 @@
 Cornflower::Model.new do
+  internet_provider
   home_lan do
     router
     windows_desktop
     raspberrypi
     iphone
 
-    iphone >> router
-    raspberrypi >> router
-    windows_desktop >> router
+    iphone >> router | :wlan
+    raspberrypi >> router | :lan
+    windows_desktop >> router | :lan
   end
+  internet_provider << router | :wan
 end

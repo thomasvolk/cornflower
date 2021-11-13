@@ -9,6 +9,8 @@ plantuml = Cornflower::Export::PlanUMLExporter.new
 
 s = StringIO.new
 
+s << "\n@startuml\n\n"
 plantuml.export(model, s)
+s << "\n@enduml\n"
 
 puts s.string
