@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'cornflower'
+require 'cornflower/export/plantuml'
 require 'stringio'
 
 model = eval File.read(ARGV[0])
