@@ -100,14 +100,6 @@ module Cornflower
     def has_description?
       @description != nil
     end
-
-    def to_s
-      d = ""
-      unless @description.nil?
-        d = " | #{@description}"
-      end
-      "Relation(#{@from} --> #{@to}#{d})"
-    end
   end
 
   class ModelWalker
