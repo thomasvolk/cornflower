@@ -29,25 +29,18 @@ module Cornflower
         input_file = ARGV.pop
         abort("No inputfile given!\n#{BANNER}") unless input_file
       
+        model = eval File.read(input_file)
+        exporter = Cornflower::Export::PlanUMLExporter.new
+
         if output_filename
             File.open(output_filename, 'w') { |output_file| 
-              parse_model(input_file, output_file)
+              exporter.export(model, output_file)
             }
         else
           s = StringIO.new
-          parse_model(input_file, s)
+          exporter.export(model, s)
           puts s.string
         end
-      end
-
-      def parse_model(input_file, out)
-        model = eval File.read(input_file)
-
-        plantuml = Cornflower::Export::PlanUMLExporter.new
-
-        out << "\n@startuml\n\n"
-        plantuml.export(model, out)
-        out << "\n@enduml\n"
       end
 
     end

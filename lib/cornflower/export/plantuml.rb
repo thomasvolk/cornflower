@@ -31,11 +31,14 @@ module Cornflower
         end
   
         def export(model, out, filter = ->(c){true})
+          out << "@startuml\n\n"
           walker = model.walker
           walker.on_begin_node {|c, l| out << self.begin_component(c, l) }
           walker.on_end_node {|c, l| out << self.end_component(c, l) }
           walker.on_relation {|r| out << self.relation(r) }
           walker.walk filter
+          out << "\n@enduml\n"
+          
         end
   
         private
