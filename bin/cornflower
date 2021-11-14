@@ -1,16 +1,5 @@
 #!/usr/bin/env ruby
-require 'cornflower'
-require 'cornflower/export/plantuml'
-require 'stringio'
+require 'cornflower/cli'
 
-model = eval File.read(ARGV[0])
-
-plantuml = Cornflower::Export::PlanUMLExporter.new
-
-s = StringIO.new
-
-s << "\n@startuml\n\n"
-plantuml.export(model, s)
-s << "\n@enduml\n"
-
-puts s.string
+app = Cornflower::Cli::App.new
+app.run
