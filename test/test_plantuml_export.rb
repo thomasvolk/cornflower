@@ -2,6 +2,7 @@ require 'test_helper'
 require 'minitest/autorun'
 require 'model'
 require 'cornflower'
+require 'cornflower/filter'
 require 'cornflower/export/plantuml'
 
 class PlantUmlExportTest < Minitest::Test
@@ -13,7 +14,9 @@ class PlantUmlExportTest < Minitest::Test
 
     plantuml.export(TestModel::MODEL, s)
 
-    assert_equal """cloud CloudProvider {
+    assert_equal """@startuml
+
+cloud CloudProvider {
   node Kubernetes {
     hexagon OnlineShop
     hexagon ProductCatalogService
@@ -28,6 +31,8 @@ ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue : push order
 WarehouseService --> order_queue : pull order
+
+@enduml
 """, s.string
 
   end
@@ -39,7 +44,9 @@ WarehouseService --> order_queue : pull order
 
     plantuml.export(TestModel::MODEL, s, Cornflower::Filter::tags(:dev))
 
-    assert_equal """hexagon OnlineShop
+    assert_equal """@startuml
+
+hexagon OnlineShop
 hexagon ProductCatalogService
 hexagon WarehouseService
 queue order_queue
@@ -50,6 +57,8 @@ ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue : push order
 WarehouseService --> order_queue : pull order
+
+@enduml
 """, s.string
 
 

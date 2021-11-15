@@ -77,12 +77,6 @@ module Cornflower
     end
   end
 
-  module Filter
-    def self.tags(*tags)
-      ->(c) { !c.attributes.fetch(:tags, []).filter {|t| tags.include? t }.empty? }
-    end
-  end
-
   class Relation
     attr_reader :from, :to
     attr_accessor :description
