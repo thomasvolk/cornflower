@@ -3,16 +3,16 @@ require 'minitest/autorun'
 require 'model'
 require 'cornflower'
 require 'cornflower/filter'
+require 'cornflower/walker'
 require 'cornflower/export/plantuml'
 
 class PlantUmlExportTest < Minitest::Test
 
   def test_plantuml
-    plantuml = Cornflower::Export::PlanUMLExporter.new
-
     s = StringIO.new
-
-    plantuml.export(TestModel::MODEL, s)
+    plantuml = Cornflower::Export::PlanUMLExporter.new s
+    walker = Cornflower::Walker::NodeWalker.new TestModel::MODEL
+    walker.walk plantuml
 
     assert_equal """@startuml
 
@@ -38,11 +38,11 @@ WarehouseService --> order_queue : pull order
   end
 
   def test_plantuml_with_filter
-    plantuml = Cornflower::Export::PlanUMLExporter.new
-
     s = StringIO.new
-
-    plantuml.export(TestModel::MODEL, s, Cornflower::Filter::tags(:dev))
+    plantuml = Cornflower::Export::PlanUMLExporter.new s
+    walker = Cornflower::Walker::NodeWalker.new TestModel::MODEL
+    walker.filter = Cornflower::Filter::tags(:dev)
+    walker.walk plantuml
 
     assert_equal """@startuml
 

@@ -1,6 +1,7 @@
 require 'optionparser'
 require 'cornflower/export/plantuml'
 require 'cornflower/filter'
+require 'cornflower/walker'
 require 'cornflower'
 require 'stringio'
 
@@ -35,17 +36,18 @@ module Cornflower
         abort("No inputfile given!\n#{BANNER}") unless input_file
       
         model = eval File.read(input_file)
-        exporter = Cornflower::Export::PlanUMLExporter.new
-        filter = Cornflower::Filter::tags(*tags)
-
+        walker = Cornflower::Walker::NodeWalker.new model
+        walker.filter = Cornflower::Filter::tags(*tags)
 
         if output_filename
             File.open(output_filename, 'w') { |output_file| 
-              exporter.export(model, output_file, filter)
+              exporter = Cornflower::Export::PlanUMLExporter.new output_file
+              walker.walk exporter
             }
         else
           s = StringIO.new
-          exporter.export(model, s, filter)
+          exporter = Cornflower::Export::PlanUMLExporter.new s
+          walker.walk exporter
           puts s.string
         end
       end
