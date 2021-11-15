@@ -3,7 +3,7 @@ require 'cornflower'
 module TestModel
 
   MODEL = Cornflower::Model.new do
-    CloudProvider(:shape => :cloud) {
+    CloudProvider {
       Kubernetes {
         OnlineShop(:shape => :hexagon, :tags => [:dev, :shop])
         ProductCatalogService(:shape => :hexagon, :tags => [:dev])
@@ -19,7 +19,7 @@ module TestModel
     }
   end
   MODEL.add do
-    CloudProvider().Kubernetes().OnlineShop >> CloudProvider().OrderQueue() | "push order"
+    CloudProvider(:shape => :cloud).Kubernetes().OnlineShop >> CloudProvider().OrderQueue() | "push order"
     CloudProvider().OrderQueue() << CloudProvider().Kubernetes().WarehouseService | "pull order"
   end
   MODEL.sealed = true

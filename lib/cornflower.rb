@@ -10,7 +10,9 @@ module Cornflower
 
     def add_node(name, attributes = {}, &block)
       if @children.has_key? name
-        return @children[name]
+        n = @children[name]
+        n.attributes = n.attributes.merge(attributes)
+        return n
       end
       if @sealed
         raise NoMethodError.new name
@@ -38,7 +40,8 @@ module Cornflower
   end
 
   class Node < AbstractNode
-    attr_reader :name, :sealed, :attributes
+    attr_reader :name, :sealed
+    attr_accessor :attributes
 
     def initialize(model, name, attributes = {})
       @name = attributes.fetch(:name, name)
