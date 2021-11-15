@@ -81,17 +81,23 @@ module Cornflower
   end
 
   class Relation
-    attr_reader :from, :to
+    attr_reader :from, :to, :attributes
     attr_accessor :description
 
     def initialize(from, to)
       @from = from
       @to = to
       @description = nil
+      @attributes = {}
     end
 
     def |(description)
       @description = description
+      self
+    end
+
+    def <(attributes)
+      @attributes = @attributes.merge(attributes)
       self
     end
 

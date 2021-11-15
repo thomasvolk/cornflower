@@ -21,7 +21,7 @@ module TestModel
   MODEL.add do
     CloudProvider(:shape => :cloud) do
       Kubernetes().OnlineShop >> OrderQueue() | "push order"
-      OrderQueue() <<  Kubernetes().WarehouseService | "pull order"
+      OrderQueue() <<  Kubernetes().WarehouseService | "pull order" < {:line => '..>'}
     end
   end
   MODEL.sealed = true

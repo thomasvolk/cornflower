@@ -30,7 +30,7 @@ OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue : push order
-WarehouseService --> order_queue : pull order
+WarehouseService ..> order_queue : pull order
 
 @enduml
 """, s.string
@@ -56,7 +56,7 @@ OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue : push order
-WarehouseService --> order_queue : pull order
+WarehouseService ..> order_queue : pull order
 
 @enduml
 """, s.string

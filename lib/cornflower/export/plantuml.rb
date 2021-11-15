@@ -1,12 +1,12 @@
 module Cornflower
   module Export
     class PlanUMLExporter
-        attr_accessor :default_shape, :indent, :default_arrow
+        attr_accessor :default_shape, :indent, :default_line
   
         def initialize(out)
           @default_shape = "node"
           @indent = 2
-          @default_arrow = "-->"
+          @default_line = "-->"
           @out = out
         end
   
@@ -34,9 +34,9 @@ module Cornflower
         end
   
         def on_relation(r)
-          arrow = @default_arrow
+          line = r.attributes.fetch(:line, @default_line)
           description = r.has_description? ? " : #{r.description}" : ""
-          @out << "#{r.from.name} #{arrow} #{r.to.name}#{description}\n"
+          @out << "#{r.from.name} #{line} #{r.to.name}#{description}\n"
         end
   
         private
