@@ -9,21 +9,22 @@ module Cornflower
     end
 
     def add_node(name, attributes = {}, &block)
+      n = nil
       if @children.has_key? name
         n = @children[name]
         n.attributes = n.attributes.merge(attributes)
-        return n
       end
-      if @sealed
-        raise NoMethodError.new name
-      else        
+      if n == nil
+        if @sealed
+          raise NoMethodError.new name
+        end  
         n = Node.new @model, name, attributes
         @children[name] = n
-        if block_given?
-          n.instance_eval(&block)
-        end
-        return n
       end
+      if block_given?
+        n.instance_eval(&block)
+      end
+      n
     end
 
     def children

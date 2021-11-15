@@ -18,7 +18,6 @@ class ModelTest < Minitest::Test
     assert_raises NoMethodError do
       model.not_existing
     end
-    
     assert_equal :A, model.A.name
     assert_raises NoMethodError do
       model.A.B.not_existing
