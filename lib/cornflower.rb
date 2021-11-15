@@ -62,8 +62,11 @@ module Cornflower
     def initialize(&block)
       @relations = []
       super(self)
+      add(&block)
+    end
+
+    def add(&block)
       self.instance_eval(&block)
-      self.sealed = true
     end
 
     def add_relation(from, to)

@@ -23,18 +23,18 @@ module Cornflower
 
       def traverse_nodes(exporter, level, nodes)
         nodes.each { |n|
-            filter_match = @filter.call(n)
-            new_level = level
-            if filter_match
-              new_level = new_level + 1
-              exporter.on_begin_node(n, level)
-            end
-            traverse_nodes(exporter, new_level, n.children)
-            if filter_match
-              exporter.on_end_node(n, level)
-            end
-          }
-        end
+          filter_match = @filter.call(n)
+          new_level = level
+          if filter_match
+            new_level = new_level + 1
+            exporter.on_begin_node(n, level)
+          end
+          traverse_nodes(exporter, new_level, n.children)
+          if filter_match
+            exporter.on_end_node(n, level)
+          end
+        }
+      end
 
     end
   end

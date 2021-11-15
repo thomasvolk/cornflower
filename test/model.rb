@@ -16,9 +16,12 @@ module TestModel
       Kubernetes().OnlineShop >> ShopDatabase()
       Kubernetes().ProductCatalogService >> ProductDatabase()
       Kubernetes().OnlineShop >> Kubernetes().ProductCatalogService()
-      Kubernetes().OnlineShop >> OrderQueue() | "push order"
-      OrderQueue() << Kubernetes().WarehouseService | "pull order"
     }
   end
+  MODEL.add do
+    CloudProvider().Kubernetes().OnlineShop >> CloudProvider().OrderQueue() | "push order"
+    CloudProvider().OrderQueue() << CloudProvider().Kubernetes().WarehouseService | "pull order"
+  end
+  MODEL.sealed = true
 
 end

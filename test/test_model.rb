@@ -12,6 +12,9 @@ class ModelTest < Minitest::Test
       end
     end
 
+    assert_equal :X, model.X.name
+    
+    model.sealed = true
     assert_raises NoMethodError do
       model.not_existing
     end
