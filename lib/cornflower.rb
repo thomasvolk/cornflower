@@ -1,9 +1,10 @@
 module Cornflower
 
   class AbstractNode
+
+
     def initialize(model)
       @children = {}
-      @sealed = false
       @model = model
     end
 
@@ -14,7 +15,7 @@ module Cornflower
         n.attributes = n.attributes.merge(attributes)
       end
       if n == nil
-        if @sealed
+        if @model.sealed
           raise NoMethodError.new name
         end  
         n = Node.new @model, name, attributes
@@ -29,15 +30,10 @@ module Cornflower
     def children
       @children.values
     end
-
-    def sealed=(val)
-      @sealed = val
-      @children.each {|n, c| c.sealed = val}
-    end
   end
 
   class Node < AbstractNode
-    attr_reader :name, :sealed
+    attr_reader :name
     attr_accessor :attributes
 
     def initialize(model, name, attributes = {})
@@ -57,10 +53,11 @@ module Cornflower
   end
 
   class Model < AbstractNode
-    attr_reader :root, :relations
+    attr_reader :root, :relations, :sealed
 
     def initialize(&block)
       @relations = []
+      @sealed = false
       super(self)
       if block_given?
         add(&block)
@@ -86,7 +83,11 @@ module Cornflower
       r = Relation.new from, to
       @relations << r
       r
-    end 
+    end
+
+    def sealed=(val)
+      @sealed = val
+    end
   end
 
   class Relation

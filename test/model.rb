@@ -16,14 +16,34 @@ module TestModel
       Kubernetes().OnlineShop >> ShopDatabase()
       Kubernetes().ProductCatalogService >> ProductDatabase()
       Kubernetes().OnlineShop >> Kubernetes().ProductCatalogService()
+
+      ### reserved names ###
+
+      # children
+      # name
+      # attributes
     }
+    
+    ### reserved names ###
+
+    # children
+    # sealed
+    # root
+    # relations
+    # load
+    # load_string
+    # add
+    # add_relation
+
   end
+
   MODEL.add do
     CloudProvider(:shape => :cloud) do
       Kubernetes().OnlineShop >> OrderQueue() | "push order"
       OrderQueue() <<  Kubernetes().WarehouseService | "pull order" < {:line => '..>'}
     end
   end
+  
   MODEL.sealed = true
 
 end
