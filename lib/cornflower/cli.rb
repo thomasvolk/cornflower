@@ -2,6 +2,7 @@ require 'optionparser'
 require 'cornflower/export/plantuml'
 require 'cornflower/filter'
 require 'cornflower/walker'
+require 'cornflower/version'
 require 'cornflower'
 require 'stringio'
 

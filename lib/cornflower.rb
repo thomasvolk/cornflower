@@ -1,5 +1,4 @@
 module Cornflower
-  VERSION = '0.0.1'
 
   class AbstractNode
     def initialize(model)
