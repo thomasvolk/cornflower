@@ -1,0 +1,10 @@
+cluster03 {
+    loadbalancer03
+    appserver01
+    appserver02
+    appserver03
+
+    loadbalancer03 >> appserver01
+    loadbalancer03 >> appserver02
+    loadbalancer03 >> appserver03
+}

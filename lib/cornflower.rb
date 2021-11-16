@@ -8,7 +8,7 @@ module Cornflower
       @model = model
     end
 
-    def add_node(name, attributes = {}, &block)
+    def method_missing(name, attributes = {}, &block)
       n = nil
       if @children.has_key? name
         n = @children[name]
@@ -35,9 +35,6 @@ module Cornflower
       @sealed = val
       @children.each {|n, c| c.sealed = val}
     end
-
-    alias method_missing add_node
-
   end
 
   class Node < AbstractNode
@@ -66,11 +63,24 @@ module Cornflower
     def initialize(&block)
       @relations = []
       super(self)
-      add(&block)
+      if block_given?
+        add(&block)
+      end
+    end
+
+    def load(filename)
+      load_string File.read(filename)
+      self
+    end
+
+    def load_string(text)
+      self.instance_eval text
+      self
     end
 
     def add(&block)
       self.instance_eval(&block)
+      self
     end
 
     def add_relation(from, to)

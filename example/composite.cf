@@ -1,0 +1,12 @@
+model = Cornflower::Model.new {
+  load('parts/cluster01.cf')
+  load('parts/cluster02.cf')
+  load('parts/cluster03.cf')
+
+  cluster01().webserver01() >> cluster03().loadbalancer03()
+  cluster01().webserver02() >> cluster03().loadbalancer03()
+  cluster01().webserver03() >> cluster03().loadbalancer03()
+  cluster03().appserver01() >> cluster02().loadbalancer02()
+  cluster03().appserver02() >> cluster02().loadbalancer02()
+  cluster03().appserver03() >> cluster02().loadbalancer02()
+}

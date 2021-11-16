@@ -5,12 +5,13 @@ require 'cornflower'
 class ModelTest < Minitest::Test
 
   def test_sealed_nodes
-    model = Cornflower::Model.new do
+    model = Cornflower::Model.new 
+    model.load_string %Q{
       A do
         B do
         end
       end
-    end
+    }
 
     assert_equal :X, model.X.name
     

@@ -1,0 +1,10 @@
+cluster01 {
+    loadbalancer01
+    webserver01
+    webserver02
+    webserver03
+
+    loadbalancer01 >> webserver01
+    loadbalancer01 >> webserver02
+    loadbalancer01 >> webserver03
+}

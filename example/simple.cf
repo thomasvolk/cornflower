@@ -4,7 +4,9 @@ Cornflower::Model.new do
   end
   home_lan do
     router
-    windows_desktop
+    windows_desktop {
+      virtualbox
+    }
     raspberrypi
     iphone
 
