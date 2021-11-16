@@ -37,7 +37,7 @@ module Cornflower
       
         model = eval File.read(input_file)
         model.sealed = true
-        walker = Cornflower::Walker::NodeWalker.new model
+        walker = Cornflower::Walker.new model
         walker.filter = Cornflower::Filter::tags(*tags)
 
         if output_filename

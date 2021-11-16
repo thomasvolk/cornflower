@@ -1,6 +1,8 @@
+require 'cornflower/walker'
+
 module Cornflower
   module Export
-    class PlanUMLExporter
+    class PlanUMLExporter < Cornflower::Walker::Handler
         attr_accessor :default_shape, :indent, :default_line
   
         def initialize(out)

@@ -11,7 +11,7 @@ class PlantUmlExportTest < Minitest::Test
   def test_plantuml
     s = StringIO.new
     plantuml = Cornflower::Export::PlanUMLExporter.new s
-    walker = Cornflower::Walker::NodeWalker.new TestModel::MODEL
+    walker = Cornflower::Walker.new TestModel::MODEL
     walker.walk plantuml
 
     assert_equal """@startuml
@@ -40,7 +40,7 @@ WarehouseService ..> order_queue : pull order
   def test_plantuml_with_filter
     s = StringIO.new
     plantuml = Cornflower::Export::PlanUMLExporter.new s
-    walker = Cornflower::Walker::NodeWalker.new TestModel::MODEL
+    walker = Cornflower::Walker.new TestModel::MODEL
     walker.filter = Cornflower::Filter::tags(:dev)
     walker.walk plantuml
 
