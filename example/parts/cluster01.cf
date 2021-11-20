@@ -1,4 +1,4 @@
-cluster01 {
+cluster01(:shape => "frame") {
     loadbalancer01
     webserver01
     webserver02

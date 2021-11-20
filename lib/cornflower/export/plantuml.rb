@@ -3,12 +3,14 @@ require 'cornflower/walker'
 module Cornflower
   module Export
     class PlanUMLExporter < Cornflower::Walker::Handler
-      attr_accessor :default_shape, :indent, :default_line
+      attr_accessor :default_node_shape, :indent, :default_line_shape
 
       def initialize(out)
-        @default_shape = "node"
+        @default_node_shape = "node"
+        @default_node_style = nil
+        @default_line_shape = "-->"
+        @default_line_style = nil
         @indent = 2
-        @default_line = "-->"
         @out = out
       end
 
@@ -25,8 +27,10 @@ module Cornflower
         if !c.children.empty?
           scope = " {"
         end
-        shape = c.attributes.fetch(:shape, @default_shape)
-        @out << "#{indent_space(level)}#{shape} #{c.name}#{scope}\n"
+        shape = c.attributes.fetch(:shape, @default_node_shape)
+        node_style = c.attributes.fetch(:style, @default_node_style)
+        style = node_style ? " ##{node_style}" : ""
+        @out << "#{indent_space(level)}#{shape} #{c.name}#{style}#{scope}\n"
       end
 
       def on_end_node(c, level)
@@ -36,9 +40,11 @@ module Cornflower
       end
 
       def on_relation(r)
-        line = r.attributes.fetch(:line, @default_line)
+        line_shape = r.attributes.fetch(:shape, @default_line_shape)
+        line_style = r.attributes.fetch(:style, @default_line_style)
+        style = line_style ? " ##{line_style}" : ""
         description = r.has_description? ? " : #{r.description}" : ""
-        @out << "#{r.from.name} #{line} #{r.to.name}#{description}\n"
+        @out << "#{r.from.name} #{line_shape} #{r.to.name}#{style}#{description}\n"
       end
 
       private

@@ -3,7 +3,7 @@ require 'cornflower'
 module TestModel
 
   MODEL = Cornflower::Model.new do
-    CloudProvider {
+    CloudProvider(:style => "aliceblue;line:blue;line.dotted;text:blue") {
       Kubernetes {
         OnlineShop(:shape => :hexagon, :tags => [:dev, :shop])
         ProductCatalogService(:shape => :hexagon, :tags => [:dev])
@@ -40,7 +40,7 @@ module TestModel
   MODEL.add do
     CloudProvider(:shape => :cloud) do
       Kubernetes().OnlineShop >> OrderQueue() | "push order"
-      OrderQueue() <<  Kubernetes().WarehouseService | "pull order" < {:line => '..>'}
+      OrderQueue() <<  Kubernetes().WarehouseService | "pull order" < {:style => "line:red;line.bold;text:red", :shape => '..>'}
     end
   end
   

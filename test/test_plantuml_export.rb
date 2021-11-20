@@ -16,7 +16,7 @@ class PlantUmlExportTest < Minitest::Test
 
     assert_equal """@startuml
 
-cloud CloudProvider {
+cloud CloudProvider #aliceblue;line:blue;line.dotted;text:blue {
   node Kubernetes {
     hexagon OnlineShop
     hexagon ProductCatalogService
@@ -30,7 +30,7 @@ OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue : push order
-WarehouseService ..> order_queue : pull order
+WarehouseService ..> order_queue #line:red;line.bold;text:red : pull order
 
 @enduml
 """, s.string
@@ -56,7 +56,7 @@ OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
 OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue : push order
-WarehouseService ..> order_queue : pull order
+WarehouseService ..> order_queue #line:red;line.bold;text:red : pull order
 
 @enduml
 """, s.string
