@@ -16,4 +16,4 @@ build project:
 
 install project:
 
-    bundle install
+    gem install cornflower-0.0.1.gem
