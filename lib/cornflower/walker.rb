@@ -1,6 +1,14 @@
 module Cornflower
   class Walker
     class Handler
+      def on_config(config)
+        config.each do | name, value |
+          if self.respond_to?(name)
+            self.send("#{name}=", value)
+          end
+        end
+      end
+
       def on_start
       end
 
@@ -23,30 +31,31 @@ module Cornflower
       @filter = ->(c) {true}
     end
 
-    def walk(exporter)
-      exporter.on_start
-      traverse_nodes(exporter, 0, @model.children)
+    def walk(handler)
+      handler.on_config(@model.config)
+      handler.on_start
+      traverse_nodes(handler, 0, @model.children)
       @model.relations.each { |r|
         if @filter.call(r.from) && @filter.call(r.to)
-          exporter.on_relation(r)
+          handler.on_relation(r)
         end
       }
-      exporter.on_finish
+      handler.on_finish
     end
 
     private
 
-    def traverse_nodes(exporter, level, nodes)
+    def traverse_nodes(handler, level, nodes)
       nodes.each { |n|
         filter_match = @filter.call(n)
         new_level = level
         if filter_match
           new_level = new_level + 1
-          exporter.on_begin_node(n, level)
+          handler.on_begin_node(n, level)
         end
-        traverse_nodes(exporter, new_level, n.children)
+        traverse_nodes(handler, new_level, n.children)
         if filter_match
-          exporter.on_end_node(n, level)
+          handler.on_end_node(n, level)
         end
       }
     end

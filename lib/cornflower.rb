@@ -53,11 +53,12 @@ module Cornflower
   end
 
   class Model < AbstractNode
-    attr_reader :root, :relations, :sealed
+    attr_reader :root, :relations, :sealed, :config
 
-    def initialize(&block)
+    def initialize(config = {}, &block)
       @relations = []
       @sealed = false
+      @config = config
       super(self)
       if block_given?
         add(&block)

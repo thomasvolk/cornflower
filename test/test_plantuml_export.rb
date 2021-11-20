@@ -17,7 +17,7 @@ class PlantUmlExportTest < Minitest::Test
     assert_equal """@startuml
 
 cloud CloudProvider #aliceblue;line:blue;line.dotted;text:blue {
-  node Kubernetes {
+  frame Kubernetes {
     hexagon OnlineShop
     hexagon ProductCatalogService
     hexagon WarehouseService

@@ -3,7 +3,7 @@ require 'cornflower/walker'
 module Cornflower
   module Export
     class PlanUMLExporter < Cornflower::Walker::Handler
-      attr_accessor :default_node_shape, :indent, :default_line_shape
+      attr_accessor :indent, :default_line_shape, :default_line_style, :default_node_shape, :default_node_style
 
       def initialize(out)
         @default_node_shape = "node"
