@@ -19,6 +19,7 @@ module TestModel
 
       ### reserved names ###
 
+      # self
       # children
       # name
       # attributes
@@ -26,6 +27,7 @@ module TestModel
     
     ### reserved names ###
 
+    # self
     # children
     # sealed
     # root
@@ -39,8 +41,8 @@ module TestModel
 
   MODEL.add do
     CloudProvider(:shape => :cloud) do
-      Kubernetes().OnlineShop >> OrderQueue() | "push order"
-      OrderQueue() <<  Kubernetes().WarehouseService | "pull order" < {:style => "line:red;line.bold;text:red", :shape => '..>'}
+      self.Kubernetes.OnlineShop >> self.OrderQueue | "push order"
+      self.OrderQueue <<  self.Kubernetes.WarehouseService | "pull order" < {:style => "line:red;line.bold;text:red", :shape => '..>'}
     end
   end
   
