@@ -1,4 +1,9 @@
-model = Cornflower::Model.new {
+model = Cornflower::Model.new(
+  :default_line_style => "blue",
+  :default_line_shape => "-[thickness=2]->",
+  :default_node_shape => "agent",
+  :default_node_style => "aliceblue"
+) {
   load('parts/cluster01.cf')
   load('parts/cluster02.cf')
   load('parts/cluster03.cf')
@@ -8,5 +13,5 @@ model = Cornflower::Model.new {
   cluster01().webserver03() >> cluster03().loadbalancer03()
   cluster03().appserver01() >> cluster02().loadbalancer02()
   cluster03().appserver02() >> cluster02().loadbalancer02()
-  cluster03().appserver03() >> cluster02().loadbalancer02() < {:shape => "..>", :style => "line:grey"}
+  cluster03().appserver03() >> cluster02().loadbalancer02() < {:shape => "..>", :style => "line:red"}
 }
