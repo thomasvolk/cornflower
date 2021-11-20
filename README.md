@@ -11,3 +11,9 @@ start unittests:
 build project:
 
     gem build
+
+# install
+
+install project:
+
+    bundle install
