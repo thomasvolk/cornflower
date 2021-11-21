@@ -1,19 +1,24 @@
+# cornflower
 
+cornflower is a specification for defining architectural diagrams.
+It can be exported to [PlantUML](https://plantuml.com/).
 
-# Test
+## development
+
+### test
 
 start unittests:
 
     rake test
 
-# Build
+### build
 
 build project:
 
     gem build
 
-# install
+### install
 
 install project:
 
-    gem install cornflower-0.0.1.gem
+    gem install cornflower-X.X.X.gem

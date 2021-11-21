@@ -1,0 +1,18 @@
+Cornflower::Model.new do
+  user(:shape => :actor)
+  
+  internet(:shape => :cloud)
+
+  firewall
+
+  private_network(:shape => :node) do
+    server
+    database(:shape => :database)
+
+    server() >> database() | :SQL
+  end
+
+  user() >> internet() | :http
+  internet() >> firewall() | :http
+  firewall() >> private_network().server | :http
+end

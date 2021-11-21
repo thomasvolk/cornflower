@@ -1,12 +1,13 @@
-Cornflower::Model.new do
-  internet do
+Cornflower::Model.new(
+  :default_node_shape => :rectangle, 
+  :default_node_style => "white"
+) do
+  internet(:shape => :cloud) do
     provider
   end
-  home_lan do
+  home_lan(:shape => :node) do
     router
-    windows_desktop {
-      virtualbox
-    }
+    windows_desktop
     raspberrypi
     iphone
 

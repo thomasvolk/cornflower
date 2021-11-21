@@ -15,6 +15,7 @@ function generate {
 
 check_if_available plantuml
 generate simple
+generate webapp
 generate composite
 
 
