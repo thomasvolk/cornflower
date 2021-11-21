@@ -3,6 +3,11 @@
 cornflower is a specification for defining architectural diagrams.
 It can be exported to [PlantUML](https://plantuml.com/).
 
+What is the advantage of using cornflower?
+
+* You are able gererate different diagrams from the same source by filtering nodes via tags
+* You can organize your specifications in multiple files and merge them together
+
 ## example
 
 This is a simple example:
