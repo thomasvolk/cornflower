@@ -3,7 +3,7 @@ Cornflower::Model.new do
   
   internet(:shape => :cloud)
 
-  firewall
+  firewall(:style => "red")
 
   private_network(:shape => :node) do
     server
