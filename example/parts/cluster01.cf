@@ -1,8 +1,8 @@
 cluster01(:shape => "frame") {
-    loadbalancer01
-    webserver01
-    webserver02
-    webserver03
+    loadbalancer01(:tags => [:component])
+    webserver01(:tags => [:component])
+    webserver02(:tags => [:component])
+    webserver03(:tags => [:component])
 
     loadbalancer01 >> webserver01
     loadbalancer01 >> webserver02

@@ -1,10 +1,10 @@
-cluster02(:shape => "frame") {
-    loadbalancer02
-    database01
-    database02
-    database03
+cluster02(:shape => "frame", :style => "lightgrey;line:blue;line.dotted;text:blue") {
+    loadbalancer02(:tags => [:component])
+    appserver01(:tags => [:component])
+    appserver02(:tags => [:component])
+    appserver03(:tags => [:component], :style => "pink")
 
-    loadbalancer02 >> database01
-    loadbalancer02 >> database02
-    loadbalancer02 >> database03
+    loadbalancer02 >> appserver01
+    loadbalancer02 >> appserver02
+    loadbalancer02 >> appserver03
 }
