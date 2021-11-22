@@ -9,13 +9,15 @@ function check_if_available {
 }
 
 function generate {
-  echo "generate '$1'"
-  (cd example && ruby -I ../lib ../bin/cornflower $1.cf -o $1.puml && plantuml $1.puml)
+  name=$1
+  shift
+  echo "generate '$name'"
+  (cd example && ruby -I ../lib ../bin/cornflower $@ $name.cf -o $name.puml && plantuml $name.puml)
 }
 
 check_if_available plantuml
-generate simple
-generate webapp
-generate composite
+generate simple $@
+generate webapp $@
+generate composite $@
 
 

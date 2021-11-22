@@ -1,7 +1,12 @@
 module Cornflower
   module Filter
-    def self.tags(*tags)
-      TagFilter.new tags
+    def self.tags(tags, invert = false)
+      f = TagFilter.new tags
+      if invert
+        self.invert f
+      else
+        f
+      end
     end
 
     def self.invert(filter)

@@ -14,6 +14,7 @@ module Cornflower
       def run       
         output_filename = nil    
         tags = nil
+        invert_tag_filtering = false
         
         parser = OptionParser.new do |opts|
           opts.banner = BANNER
@@ -31,6 +32,9 @@ module Cornflower
           opts.on("-t", "--tags TAGS", "comma separated tag list") do |tags_list|
             tags = tags_list.split(',').map { |t| t.strip.to_sym }
           end
+          opts.on("-T", "--tags-invert", "invert the tag filtering") do
+            invert_tag_filtering = true
+          end
         end.parse!
             
         input_file = ARGV.pop
@@ -40,7 +44,7 @@ module Cornflower
         model.sealed = true
         walker = Cornflower::Walker.new model
         if tags != nil
-          walker.filter = Cornflower::Filter::tags *tags
+          walker.filter = Cornflower::Filter::tags tags, invert = invert_tag_filtering 
         end
 
         if output_filename
