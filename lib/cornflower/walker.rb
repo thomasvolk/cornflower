@@ -28,7 +28,7 @@ module Cornflower
 
     def initialize(model)
       @model = model
-      @filter = ->(c) {true}
+      @filter = Cornflower::Filter::PassThroughFilter.new
     end
 
     def walk(handler)
@@ -36,7 +36,7 @@ module Cornflower
       handler.on_start
       traverse_nodes(handler, 0, @model.children)
       @model.relations.each { |r|
-        if @filter.call(r.from) && @filter.call(r.to)
+        if @filter.filter(r.from) && @filter.filter(r.to)
           handler.on_relation(r)
         end
       }
@@ -47,7 +47,7 @@ module Cornflower
 
     def traverse_nodes(handler, level, nodes)
       nodes.each { |n|
-        filter_match = @filter.call(n)
+        filter_match = @filter.filter(n)
         new_level = level
         if filter_match
           new_level = new_level + 1

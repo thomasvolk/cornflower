@@ -13,7 +13,7 @@ module Cornflower
 
       def run       
         output_filename = nil    
-        tags = []
+        tags = nil
         
         parser = OptionParser.new do |opts|
           opts.banner = BANNER
@@ -39,7 +39,9 @@ module Cornflower
         model = eval File.read(input_file)
         model.sealed = true
         walker = Cornflower::Walker.new model
-        walker.filter = Cornflower::Filter::tags(*tags)
+        if tags != nil
+          walker.filter = Cornflower::Filter::tags *tags
+        end
 
         if output_filename
             File.open(output_filename, 'w') { |output_file| 

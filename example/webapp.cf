@@ -6,7 +6,10 @@ Cornflower::Model.new do
   firewall(:style => "red")
 
   private_network(:shape => :node) do
-    server
+    server {
+      nginx
+      tomcat
+    }
     database(:shape => :database)
 
     server() >> database() | :SQL

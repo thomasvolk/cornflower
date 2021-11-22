@@ -41,7 +41,7 @@ WarehouseService ..> order_queue #line:red;line.bold;text:red : pull order
     s = StringIO.new
     plantuml = Cornflower::Export::PlanUMLExporter.new s
     walker = Cornflower::Walker.new TestModel::MODEL
-    walker.filter = Cornflower::Filter::tags(:dev)
+    walker.filter = Cornflower::Filter::TagFilter.new([:dev])
     walker.walk plantuml
 
     assert_equal """@startuml

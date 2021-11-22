@@ -3,7 +3,9 @@ require 'cornflower'
 module TestModel
 
   MODEL = Cornflower::Model.new(:default_node_shape => :frame) do
-    CloudProvider(:style => "aliceblue;line:blue;line.dotted;text:blue") {
+    CloudProvider(
+      :style => "aliceblue;line:blue;line.dotted;text:blue",
+      :tags => [:cloud]) {
       Kubernetes {
         OnlineShop(:shape => :hexagon, :tags => [:dev, :shop])
         ProductCatalogService(:shape => :hexagon, :tags => [:dev])
