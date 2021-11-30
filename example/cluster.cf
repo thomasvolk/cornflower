@@ -1,0 +1,6 @@
+model = Cornflower::Model.new do
+  load('parts/cluster01.cf')
+  load('parts/cluster02.cf')
+  load('parts/cluster03.cf')
+  load('parts/connections.cf')
+end

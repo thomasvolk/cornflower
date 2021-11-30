@@ -1,0 +1,11 @@
+model = Cornflower::Model.new(
+  :default_line_style => "blue",
+  :default_line_shape => "-[thickness=2]->",
+  :default_node_shape => "agent",
+  :default_node_style => "aliceblue"
+) {
+  load('parts/cluster01.cf')
+  load('parts/cluster02.cf')
+  load('parts/cluster03.cf')
+  load('parts/connections.cf')
+}

@@ -1,0 +1,19 @@
+Cornflower::Model.new do
+  network01(:tags => [:network]) do
+    loadbalancer(:tags => [:cms, :shop])
+    webserver01(:tags => [:cms, :shop])
+    webserver02(:tags => [:cms, :shop])
+
+    loadbalancer() >> webserver01()
+    loadbalancer() >> webserver02()
+  end
+  network02(:tags => [:network]) do
+    shopsystem(:tags => [:shop])
+    cms(:tags => [:cms])
+  end
+
+  network01().webserver01() >> network02().shopsystem()
+  network01().webserver02() >> network02().shopsystem()
+  network01().webserver01() >> network02().cms()
+  network01().webserver02() >> network02().cms()
+end

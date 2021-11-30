@@ -18,10 +18,4 @@ function generate {
   (cd $CORNFLOWER_EXAMPLE_DIR && ruby -I ../lib ../bin/cornflower $@ $source -o $target && plantuml $target)
 }
 
-function gen {
-  name=$1
-  shift
-  generate $name $name $@
-}
-
 CORNFLOWER_EXAMPLE_DIR=$(dirname "${BASH_SOURCE[0]}")

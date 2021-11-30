@@ -8,6 +8,8 @@ What is the advantage of using cornflower?
 * You are able gererate different diagrams from the same source by filtering nodes via tags
 * You can organize your specifications in multiple files and merge them together
 
+see the [manual](doc/manual.md) for more.
+
 ## example
 
 This is a simple example:
