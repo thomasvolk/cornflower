@@ -1,5 +1,7 @@
 # cornflower
 
+![cornflower](cornflower.png)
+
 cornflower is a specification for defining architectural diagrams.
 It can be exported to [PlantUML](https://plantuml.com/).
 
