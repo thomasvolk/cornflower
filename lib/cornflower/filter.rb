@@ -25,6 +25,26 @@ module Cornflower
       end
     end
 
+    class StopFilter < AbstractFilter
+      def filter(node)
+        false
+      end
+    end
+
+    class FilterChain < AbstractFilter
+      def initialize(filter_list)
+        @filter_list = filter_list
+      end
+      def filter(node)
+        for f in @filter_list do
+          if !f.filter(node)
+            return false
+          end
+        end
+        return true
+      end
+    end
+
     class InvertFilter < AbstractFilter
       def initialize(delegate)
         @delegate = delegate
