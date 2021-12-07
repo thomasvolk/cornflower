@@ -36,7 +36,7 @@ module Cornflower
       handler.on_start
       traverse_nodes(handler, 0, @model.children)
       @model.relations.each { |r|
-        if @filter.filter(r.from) && @filter.filter(r.to)
+        if @filter.filter(r)
           handler.on_relation(r)
         end
       }

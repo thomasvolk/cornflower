@@ -2,7 +2,7 @@ module Cornflower
 
   module Tags
     def tags
-      self.attributes.fetch(:tags, [])
+      self.get_tags
     end
   end
 
@@ -46,6 +46,10 @@ module Cornflower
       @name = attributes.fetch(:name, name)
       @attributes = attributes
       super(model)
+    end
+
+    def get_tags
+      @attributes.fetch(:tags, [])
     end
 
     def <<(from)
@@ -98,6 +102,7 @@ module Cornflower
   end
 
   class Relation
+    include Tags
     attr_reader :from, :to, :attributes
     attr_accessor :description
 
@@ -106,6 +111,10 @@ module Cornflower
       @to = to
       @description = nil
       @attributes = {}
+    end
+
+    def get_tags
+      @from.tags.filter { |t| @to.tags.include? t }
     end
 
     def |(description)
