@@ -37,7 +37,7 @@ WarehouseService ..> order_queue #line:red;line.bold;text:red : pull order
 
   end
 
-  def test_plantuml_with_filter
+  def test_plantuml_with_filter_dev
     s = StringIO.new
     plantuml = Cornflower::Export::PlanUMLExporter.new s
     walker = Cornflower::Walker.new TestModel::MODEL
@@ -60,8 +60,23 @@ WarehouseService ..> order_queue #line:red;line.bold;text:red : pull order
 
 @enduml
 """, s.string
+  end
 
+  def test_plantuml_with_filter_shop
+    s = StringIO.new
+    plantuml = Cornflower::Export::PlanUMLExporter.new s
+    walker = Cornflower::Walker.new TestModel::MODEL
+    walker.filter = Cornflower::Filter::TagFilter.new([:shop])
+    walker.walk plantuml
 
+    assert_equal """@startuml
+
+hexagon OnlineShop
+database ShopDatabase
+OnlineShop --> ShopDatabase
+
+@enduml
+""", s.string
   end
 
 end
