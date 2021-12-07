@@ -59,8 +59,8 @@ module Cornflower
         @tags = tags
       end
 
-      def filter(node)
-        return !node.attributes.fetch(:tags, []).filter {|t| @tags.include? t }.empty?
+      def filter(item)
+        return !item.tags.filter {|t| @tags.include? t }.empty?
       end
     end
   end

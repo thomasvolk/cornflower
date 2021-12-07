@@ -37,8 +37,8 @@ Every cornflower model must be embedded in the Cornflower Model:
 Nodes can be hirarchical:
 
     network02 do
-      shopsystem
-      cms
+      shopsystem()
+      cms()
     end
 
 They can have attributes:

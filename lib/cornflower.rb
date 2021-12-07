@@ -1,7 +1,12 @@
 module Cornflower
 
-  class AbstractNode
+  module Tags
+    def tags
+      self.attributes.fetch(:tags, [])
+    end
+  end
 
+  class AbstractNode
 
     def initialize(model)
       @children = {}
@@ -33,6 +38,7 @@ module Cornflower
   end
 
   class Node < AbstractNode
+    include Tags
     attr_reader :name
     attr_accessor :attributes
 

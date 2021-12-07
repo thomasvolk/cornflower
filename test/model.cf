@@ -1,0 +1,6 @@
+Cornflower::Model.new do
+  A()
+  B()
+
+  A() >> B()  
+end
