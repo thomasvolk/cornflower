@@ -114,7 +114,11 @@ module Cornflower
     end
 
     def get_tags
-      @from.tags.filter { |t| @to.tags.include? t }
+      common_node_tags = @from.tags.filter { |t| @to.tags.include? t }
+      if @attributes.has_key? :tags
+        return @attributes[:tags].filter { |t| common_node_tags.include? t }
+      end
+      common_node_tags
     end
 
     def |(description)

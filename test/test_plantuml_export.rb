@@ -54,7 +54,6 @@ database ShopDatabase
 database ProductDatabase
 OnlineShop --> ShopDatabase
 ProductCatalogService --> ProductDatabase
-OnlineShop --> ProductCatalogService
 OnlineShop --> order_queue : push order
 WarehouseService ..> order_queue #line:red;line.bold;text:red : pull order
 

@@ -17,7 +17,7 @@ module TestModel
 
       Kubernetes().OnlineShop >> ShopDatabase()
       Kubernetes().ProductCatalogService >> ProductDatabase()
-      Kubernetes().OnlineShop >> Kubernetes().ProductCatalogService()
+      Kubernetes().OnlineShop >> Kubernetes().ProductCatalogService() < { :tags => [:shop] }
 
       ### reserved names ###
 
