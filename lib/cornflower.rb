@@ -2,7 +2,6 @@ module Cornflower
 
   class AbstractNode
 
-
     def initialize(model)
       @children = {}
       @model = model
@@ -12,7 +11,7 @@ module Cornflower
       n = nil
       if @children.has_key? name
         n = @children[name]
-        n.attributes = n.attributes.merge(attributes)
+        n < attributes
       end
       if n == nil
         if @model.sealed
@@ -33,13 +32,16 @@ module Cornflower
   end
 
   class Node < AbstractNode
-    attr_reader :name
-    attr_accessor :attributes
+    attr_reader :name, :attributes
 
     def initialize(model, name, attributes = {})
       @name = attributes.fetch(:name, name)
       @attributes = attributes
       super(model)
+    end
+
+    def <(attributes)
+      @attributes = @attributes.merge(attributes)
     end
 
     def <<(from)

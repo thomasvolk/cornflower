@@ -15,7 +15,10 @@ function generate {
   target="$1.puml"
   shift
   echo "generate $source => $target"
-  (cd $CORNFLOWER_EXAMPLE_DIR && ruby -I ../lib ../bin/cornflower $@ $source -o $target && plantuml $target)
+  (cd $CORNFLOWER_EXAMPLE_DIR &&
+   mkdir -p results &&
+   ruby -I ../lib ../bin/cornflower $@ $source -o "results/$target" &&
+   plantuml "results/$target")
 }
 
 CORNFLOWER_EXAMPLE_DIR=$(dirname "${BASH_SOURCE[0]}")

@@ -8,13 +8,17 @@ require 'stringio'
 
 module Cornflower
   module Cli  
+    def self.split_list(list)
+      list.split(',').map { |t| t.strip.to_sym }
+    end
+
     class App
       BANNER = "Usage: cornflower [options] inputfile"
 
       def run       
         output_filename = nil    
-        tags = nil
-        tags_exclude = false
+        tags_to_include = nil
+        tags_to_exclude = nil
         
         parser = OptionParser.new do |opts|
           opts.banner = BANNER
@@ -29,11 +33,11 @@ module Cornflower
           opts.on("-o", "--output FILENAME", "output filename") do |file_name|
             output_filename = file_name
           end
-          opts.on("-t", "--tags TAGS", "comma separated tag list") do |tags_list|
-            tags = tags_list.split(',').map { |t| t.strip.to_sym }
+          opts.on("-t", "--tags TAGS", "comma separated tag list to include") do |tags_list|
+            tags_to_include = Cornflower::Cli::split_list(tags_list)
           end
-          opts.on("-e", "--tags-exclude", "exclude all nodes of the given tags (works only together with -t)") do
-            tags_exclude = true
+          opts.on("-e", "--tags-exclude TAGS", "comma separated tag list to exlude") do |tags_list|
+            tags_to_exclude = Cornflower::Cli::split_list(tags_list)
           end
         end.parse!
             
@@ -43,9 +47,15 @@ module Cornflower
         model = eval File.read(input_file)
         model.sealed = true
         walker = Cornflower::Walker.new model
-        if tags != nil
-          walker.filter = Cornflower::Filter::tags tags, invert = tags_exclude 
+        
+        filters = []
+        if tags_to_include != nil
+          filters << Cornflower::Filter::tags(tags_to_include)
         end
+        if tags_to_exclude != nil
+          filters << Cornflower::Filter::tags(tags_to_exclude, true)
+        end
+        walker.filter = Cornflower::Filter::FilterChain.new filters
 
         if output_filename
             File.open(output_filename, 'w') { |output_file| 

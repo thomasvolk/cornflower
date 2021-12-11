@@ -4,6 +4,12 @@ require 'cornflower'
 
 class ModelTest < Minitest::Test
 
+  def test_load_file
+    model_file = File.join(File.dirname(__FILE__), 'model.cf')
+    model = Cornflower::Model.new 
+    model.load model_file
+  end
+
   def test_sealed_nodes
     model = Cornflower::Model.new 
     model.load_string %Q{
