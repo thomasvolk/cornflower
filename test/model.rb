@@ -8,7 +8,7 @@ module TestModel
       :tags => [:cloud]) {
       Kubernetes {
         OnlineShop(:shape => :hexagon, :tags => [:dev, :shop])
-        ProductCatalogService(:shape => :hexagon, :tags => [:dev])
+        ProductCatalogService(:shape => :hexagon, :tags => [:dev, :catalog])
         WarehouseService(:shape => :hexagon, :tags => [:dev])
       }
       OrderQueue(:name => "order_queue", :shape => :queue, :tags => [:dev])

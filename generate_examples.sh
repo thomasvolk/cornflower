@@ -2,19 +2,22 @@
 
 set -e
 
-. example/generator.sh
+SOURCE_DIR=$(dirname "${BASH_SOURCE[0]}")
+EXAMPLE_DIR="$SOURCE_DIR/example"
+
+. $EXAMPLE_DIR/generator.sh
 
 generate simple simple $@
 generate webapp webapp $@
 
 generate cluster cluster $@
-generate cluster cluster-component-level -t component $@
-generate cluster cluster-infrastructure-level -t component -e $@
+generate cluster cluster-components-only -t component $@
+generate cluster cluster-components-excluded -e component $@
 
 generate cluster-defaults cluster-defaults $@
 
 generate tagging tagging $@
-generate tagging tagging-no-network -t network -e  $@
-generate tagging tagging-cms -t cms $@
-generate tagging tagging-shop -t shop $@
+generate tagging tagging-network-excluded -e network $@
+generate tagging tagging-cms-only -t cms $@
+generate tagging tagging-shop-only -t shop $@
 generate tagging tagging-shop-cms -t shop,cms $@

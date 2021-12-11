@@ -1,11 +1,5 @@
 module Cornflower
 
-  module Tags
-    def tags
-      self.get_tags
-    end
-  end
-
   class AbstractNode
 
     def initialize(model)
@@ -17,7 +11,7 @@ module Cornflower
       n = nil
       if @children.has_key? name
         n = @children[name]
-        n.attributes = n.attributes.merge(attributes)
+        n < attributes
       end
       if n == nil
         if @model.sealed
@@ -38,9 +32,7 @@ module Cornflower
   end
 
   class Node < AbstractNode
-    include Tags
-    attr_reader :name
-    attr_accessor :attributes
+    attr_reader :name, :attributes
 
     def initialize(model, name, attributes = {})
       @name = attributes.fetch(:name, name)
@@ -48,8 +40,8 @@ module Cornflower
       super(model)
     end
 
-    def get_tags
-      @attributes.fetch(:tags, [])
+    def <(attributes)
+      @attributes = @attributes.merge(attributes)
     end
 
     def <<(from)
@@ -102,7 +94,6 @@ module Cornflower
   end
 
   class Relation
-    include Tags
     attr_reader :from, :to, :attributes
     attr_accessor :description
 
@@ -111,14 +102,6 @@ module Cornflower
       @to = to
       @description = nil
       @attributes = {}
-    end
-
-    def get_tags
-      common_node_tags = @from.tags.filter { |t| @to.tags.include? t }
-      if @attributes.has_key? :tags
-        return @attributes[:tags].filter { |t| common_node_tags.include? t }
-      end
-      common_node_tags
     end
 
     def |(description)

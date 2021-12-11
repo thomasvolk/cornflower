@@ -11,14 +11,14 @@ Usage: cornflower [options] inputfile
     -v, --version                    show version
     -h, --help                       print help
     -o, --output FILENAME            output filename
-    -t, --tags TAGS                  comma separated tag list
-    -e, --tags-exclude               exclude all nodes of the given tags (works only together with -t)
+    -t, --tags TAGS                  comma separated tag list to include
+    -e, --tags-exclude TAGS          comma separated tag list to exlude
 ```
 
 If -o is not given, the result will be printed to standard out. 
 With -t parameter the model can be filtered for a given tag list (comma seperated).
 This means, that all nodes will be included, which have at least one tag in the given list.
-The -t combines with the -e paramter instead excludes all nodes with these tags.
+The -e paramter works the same as -t but it excludes all nodes with the given tags.
 
 ## the language
 
@@ -130,7 +130,7 @@ webserver02 --> cms
 
 If you exclude the network *cms* you will get the following result:
 
-    cornflower -t network -e tagging.cf
+    cornflower -e network tagging.cf
 
 ```
 @startuml

@@ -1,16 +1,7 @@
 module Cornflower
   module Filter
-    def self.tags(tags, invert = false)
-      f = TagFilter.new tags
-      if invert
-        self.invert f
-      else
-        f
-      end
-    end
-
-    def self.invert(filter)
-      InvertFilter.new filter
+    def self.tags(tags, exclude = false)
+      TagFilter.new tags, exclude
     end
 
     class AbstractFilter
@@ -45,22 +36,51 @@ module Cornflower
       end
     end
 
-    class InvertFilter < AbstractFilter
-      def initialize(delegate)
-        @delegate = delegate
-      end
-      def filter(node)
-        !@delegate.filter(node)
-      end
-    end
-
     class TagFilter < AbstractFilter
-      def initialize(tags)
+      def initialize(tags, exclude = false)
         @tags = tags
+        @exclude = exclude
       end
 
       def filter(item)
-        return !item.tags.filter {|t| @tags.include? t }.empty?
+        matching_tags = get_tags(item).filter {|t| @tags.include? t }
+        @exclude ? matching_tags.empty? : !matching_tags.empty?
+      end
+
+      private
+
+      def fetch_tags(node)
+        node.attributes.fetch(:tags, [])
+      end
+
+      def get_tags(item)
+        tags = []
+        if item.is_a? Relation
+          if @exclude
+            get_all_tags_for_relation item
+          else
+            get_common_tags_for_relation item
+          end
+        else
+          fetch_tags item
+        end
+      end
+
+      def get_all_tags_for_relation(relation)
+        tags = fetch_tags(relation.from)
+        tags += fetch_tags(relation.to)
+        tags += fetch_tags(relation)        
+        tags.uniq
+      end
+
+      def get_common_tags_for_relation(relation)
+        common_tags = fetch_tags(relation.from).filter {
+          |t| fetch_tags(relation.to).include? t 
+         }
+        if relation.attributes.has_key? :tags
+          common_tags = relation.attributes[:tags].filter { |t| common_tags.include? t }
+        end
+        common_tags
       end
     end
   end
